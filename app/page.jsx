@@ -3,7 +3,7 @@ import Ticket from "./(models)/Ticket";
 
 const getTickets = async () => {
   try {
-    const res = await fetch("http://localhost:3000/api/Tickets", {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_DOMAIN_NAME}/api/Tickets`, {
       cache: "no-store",
     });
     return res.json();

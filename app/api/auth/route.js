@@ -24,8 +24,11 @@ export async function POST(req) {
     if (phoneNo === null || phoneNo.trim() === "") {
       phoneNo = undefined;
     }
+    if (userName === null || userName.trim() === "") {
+        userName = undefined;
+      }
 
-    if (!phoneNo && !email) return  NextResponse.json({ erro: "Missing Input" });
+    if (!phoneNo && !email && !userName) return  NextResponse.json({ error: "user not register" });
 
     const user = new Users({ loginId, userName, phoneNo, userRole, email });
 
