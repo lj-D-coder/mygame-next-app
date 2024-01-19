@@ -13,7 +13,7 @@ export async function POST(req) {
       bookingType,
     } = await req.json();
 
-    if (businessInfo.phoneNo) { 
+    if (businessInfo.phoneNo) {
       //const checkloginId = await Users.findOne({ loginId });
       const user = new Users({
         loginId: businessInfo.phoneNo,
@@ -23,36 +23,36 @@ export async function POST(req) {
         email: businessInfo.email
       });
 
-      const newBusiness = await user.save({ omitUndefined: true });
-    }
+      const createId = await user.save({ omitUndefined: true });
 
-    const businessID = newBusiness._id;
+      const businessID = await createId._id;
       
       const findBusiness = await BusinessSetup.findOne({ businessID });
       if (findBusiness) {
         return NextResponse.json({
-            success: true,
-            message: "Fetched Business Data",
-            findBusiness,
-          });
+          success: true,
+          message: "Fetched Business Data",
+          findBusiness,
+        });
       }
 
-    const newBusiness = new BusinessSetup({
-      businessID,
-      businessStatus,
-      businessInfo,
-      businessHours,
-      slot,
-      bookingType,
-    });
+      const newBusiness = new BusinessSetup({
+        businessID,
+        businessStatus,
+        businessInfo,
+        businessHours,
+        slot,
+        bookingType,
+      });
 
-    const savedBusiness = await newBusiness.save({ omitUndefined: true });
+      const savedBusiness = await newBusiness.save({ omitUndefined: true });
 
-    return NextResponse.json({
-      success: true,
-      message: "Business Data Saved",
-      savedBusiness,
-    });
+      return NextResponse.json({
+        success: true,
+        message: "Business Data Saved",
+        savedBusiness,
+      });
+    }
   } catch (error) {
     console.error(error);
     return NextResponse.json({
