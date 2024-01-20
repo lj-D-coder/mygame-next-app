@@ -82,3 +82,24 @@ export async function PUT(req, { params }) {
     return NextResponse.json({ message: "Error", error }, { status: 500 });
   }
 }
+
+
+export async function GET() {
+  try {
+
+    // Query the 'users' collection for users with the role 'business'
+    const business = await Users.find({ userRole: 'business' });
+
+    // Fetch user data for each user
+    const businessWithData = await Promise.all(business.map(async (business) => {
+      const businessData = await BusinessSetup.findOne({ businessID: business._id });
+      return { ...business._doc, businessData };
+    }));
+
+    // Send the users with their data as the response
+    return NextResponse.json(businessWithData);
+  } catch (error) {
+    console.error(error);
+    return NextResponse.json({ error: 'An error occurred while trying to fetch the users.' });
+  }
+}
