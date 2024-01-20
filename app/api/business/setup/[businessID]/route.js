@@ -18,7 +18,14 @@ export async function DELETE(req, { params }) {
     try {
         const { businessID } = params;
         const businessData = await BusinessSetup.findOne({ businessID });
-        await BusinessSetup.findByIdAndDelete(businessData._id);
+        const deleted = await BusinessSetup.findByIdAndDelete(businessData._id);
+        if (!deleted) { 
+            return NextResponse.json({
+                status: 404,
+                success: false,
+                message: "input business ID is not valid",
+              });
+        }
         await Users.findByIdAndDelete(businessID);
         return NextResponse.json({status: 200, message: "Business Data Deleted" }, { status: 200 });
     } catch (error) {
@@ -28,13 +35,30 @@ export async function DELETE(req, { params }) {
 
 export async function PUT(req, { params }) { 
 
-    console.log(params);
     try {
         const { businessID } = params;
         const newData = await req.json();
+    
+        const newUserData = {
+            loginId: newData.businessInfo.phoneNo,
+            userName: newData.businessInfo.name,
+            phoneNo: newData.businessInfo.phoneNo,
+            userRole: "business",
+            email: newData.businessInfo.email,
+          };
+      
+        //const createId = await user.save({ omitUndefined: true });
+        const updated = await Users.findByIdAndUpdate(businessID, { ...newUserData });
+        if (!updated) { 
+            return NextResponse.json({
+                status: 404,
+                success: false,
+                message: "input business ID is not valid",
+              });
+        }
         //const newData = body.formData;
         const findId = await BusinessSetup.findOne({ businessID });
-        const updateTicketData = await BusinessSetup.findByIdAndUpdate(findId._id, { ...newData});
+        await BusinessSetup.findByIdAndUpdate(findId._id, { ...newData});
         return NextResponse.json({status: 200 , message: "Data Updated" },{ status: 200 });
     } catch (error) {
         return NextResponse.json({  status: 500, message: "Error", error }, { status: 500 });

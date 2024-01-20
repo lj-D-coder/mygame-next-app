@@ -28,7 +28,10 @@ const usersSchema = mongoose.Schema(
     },
         {
             timestamps: true,
-        },
+    },
+    {
+        versionKey: false
+    }
 );
 
 const Users = mongoose.models.Users || mongoose.model('usersCollection', usersSchema);

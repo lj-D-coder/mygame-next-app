@@ -51,7 +51,10 @@ const businessSchema = new mongoose.Schema({
 },
 {
     timestamps: true,
-},
+  },
+  {
+    versionKey: false
+}
 );
 
 const BusinessSetup = mongoose.model('BusinessConfig', businessSchema);
