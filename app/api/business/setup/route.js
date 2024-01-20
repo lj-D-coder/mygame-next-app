@@ -68,21 +68,6 @@ export async function POST(req) {
   }
 }
 
-export async function PUT(req, { params }) {
-  try {
-    const { id } = params;
-    const body = await req.json();
-    const ticketData = body.formData;
-
-    const updateTicketData = await Ticket.findByIdAndUpdate(id, {
-      ...ticketData,
-    });
-    return NextResponse.json({ message: "Ticket Updated" }, { status: 200 });
-  } catch (error) {
-    return NextResponse.json({ message: "Error", error }, { status: 500 });
-  }
-}
-
 
 export async function GET() {
   try {
@@ -97,9 +82,9 @@ export async function GET() {
     }));
 
     // Send the users with their data as the response
-    return NextResponse.json(businessWithData);
+    return NextResponse.json({ status: 200, message: "Success", "allBusiness": businessWithData });
   } catch (error) {
     console.error(error);
-    return NextResponse.json({ error: 'An error occurred while trying to fetch the users.' });
+    return NextResponse.json({ status: 500, error: 'An error occurred while trying to fetch the users.' });
   }
 }
