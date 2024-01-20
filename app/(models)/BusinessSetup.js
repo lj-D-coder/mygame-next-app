@@ -24,6 +24,7 @@ const businessSchema = new mongoose.Schema({
     address: { type: String, required: true },
     phoneNo: { type: Number, required: true },
     email: { type: String, required: true },
+    bannerUrl: { type: String },
     gstNo: { type: String},
     location: {
         latitude: { type: String, required: true },
