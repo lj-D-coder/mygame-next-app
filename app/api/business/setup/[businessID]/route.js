@@ -9,7 +9,6 @@ export async function GET(req, { params }) {
   
         const { businessID } = params;
         const business = await Users.findById( businessID);
-        console.log(business)
         // Fetch user data for each user
         const businessData = await BusinessSetup.findOne({ businessID: business._id });
 

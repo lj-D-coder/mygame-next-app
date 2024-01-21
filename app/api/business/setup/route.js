@@ -82,7 +82,7 @@ export async function GET() {
     }));
 
     // Send the users with their data as the response
-    return NextResponse.json({ status: 200, message: "Success", "allBusiness": businessWithData });
+    return NextResponse.json({ status: 200, message: "Success", "data": businessWithData });
   } catch (error) {
     console.error(error);
     return NextResponse.json({ status: 500, error: 'An error occurred while trying to fetch the users.' });
