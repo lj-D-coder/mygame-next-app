@@ -4,15 +4,27 @@ import Users from "@/app/(models)/Users";
 
 import { NextResponse } from "next/server";
 
-// export async function GET(req, { params }) { 
-//     try {
-//         const { id } = params;
-//         const foundTicket = await Ticket.findOne({ _id: id });
-//         return NextResponse.json({ foundTicket }, { status: 200 });
-//     } catch (error) {
-//         return NextResponse.json({ message: "Error", error }, { status: 500 });
-//     }
-// }
+export async function GET(req, { params }) { 
+    try {
+  
+        const { businessID } = params;
+        const business = await Users.findById( businessID);
+        console.log(business)
+        // Fetch user data for each user
+        const businessData = await BusinessSetup.findOne({ businessID: business._id });
+
+        // Combine the business data with the business document
+        const data = { ...business._doc, businessData };
+    
+        // Send the users with their data as the response
+        return NextResponse.json({ status: 200, message: "Success", data});
+      } catch (error) {
+        console.error(error);
+        return NextResponse.json({ status: 500, error: 'An error occurred while trying to fetch the users.' });
+      }
+}
+
+
 
 export async function DELETE(req, { params }) { 
     try {

@@ -8,7 +8,7 @@ const businessSchema = new mongoose.Schema({
   businessStatus: {
     open: { type: Boolean, default: true },
     blocked: { type: Boolean, default: false },
-    verified: { type: Boolean, default: true },
+    setupComplete: { type: Boolean, default: false },
     holiday: {
         sunday: { type: Boolean, default: false },
         monday: { type: Boolean, default: false },
