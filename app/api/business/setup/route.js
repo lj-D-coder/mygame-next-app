@@ -74,7 +74,7 @@ export async function GET() {
 
     // Query the 'users' collection for users with the role 'business'
     const business = await Users.find({ userRole: 'business' });
-
+    
     // Fetch user data for each user
     const businessWithData = await Promise.all(business.map(async (business) => {
       const businessData = await BusinessSetup.findOne({ businessID: business._id });

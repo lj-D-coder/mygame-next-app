@@ -1,4 +1,3 @@
-import Ticket from "@/app/(models)/Ticket";
 import BusinessSetup from "@/app/(models)/BusinessSetup";
 import Users from "@/app/(models)/Users";
 
@@ -8,9 +7,17 @@ export async function GET(req, { params }) {
     try {
   
         const { businessID } = params;
-        const business = await Users.findById( businessID);
+        const business = await Users.findById(businessID);
+        if (!business) { 
+            return NextResponse.json({
+                status: 404,
+                success: false,
+                message: "invalid business ID",
+              });
+        }
         // Fetch user data for each user
         const businessData = await BusinessSetup.findOne({ businessID: business._id });
+        
 
         // Combine the business data with the business document
         const data = { ...business._doc, businessData };
@@ -75,3 +82,54 @@ export async function PUT(req, { params }) {
         return NextResponse.json({  status: 500, message: "Error", error }, { status: 500 });
     }
 }
+
+export async function PATCH(req, { params }) { 
+    if (req.method !== 'PATCH') {
+        NextResponse.json({ status: 405, message: 'Only PATCH requests allowed' }, {status: 405})
+        return
+      }
+    try {
+        const { businessID } = params;
+
+        const business = await Users.findById(businessID);
+        if (!business) { 
+            return NextResponse.json({
+                status: 404,
+                success: false,
+                message: "invalid business ID",
+              });
+        }
+        
+        const patchData = await req.json();
+        //console.log(patchData);
+        
+        if (patchData.businessInfo) { 
+            const patchUserData = {
+                loginId: patchData.businessInfo.phoneNo,
+                userName: patchData.businessInfo.name,
+                phoneNo: patchData.businessInfo.phoneNo,
+                userRole: "business",
+                email: patchData.businessInfo.email,
+            };
+            console.log("patchUserData");
+            console.log(patchUserData);
+            await Users.updateOne(
+                { _id: businessID },
+                { $set: patchUserData });
+        }
+
+        const result = await BusinessSetup.updateOne(
+            { businessID },
+            { $set: patchData }
+        );
+        if (result) {
+            return NextResponse.json({status: 200 , message: "Data patched" },{ status: 200 });
+        }
+        return NextResponse.json({status: 200 , message: "Data patched error" },{ status: 200 });
+        
+    } catch (error) {
+        return NextResponse.json({  status: 500, message: "Error", error }, { status: 500 });
+    }
+}
+
+
