@@ -3,6 +3,18 @@ import Users from "@/app/(models)/Users";
 
 import { NextResponse } from "next/server";
 
+
+// Function to remove null values
+function removeNulls(obj) {
+    for (let key in obj) {
+      if (obj[key] === null) {
+        delete obj[key];
+      } else if (typeof obj[key] === 'object') {
+        removeNulls(obj[key]);
+      }
+    }
+  }
+
 export async function GET(req, { params }) { 
     try {
   
@@ -55,28 +67,27 @@ export async function PUT(req, { params }) {
 
     try {
         const { businessID } = params;
-        const newData = await req.json();
-    
-        // const newUserData = {
-        //     loginId: newData.businessInfo.phoneNo,
-        //     userName: newData.businessInfo.name,
-        //     phoneNo: newData.businessInfo.phoneNo,
-        //     userRole: "business",
-        //     email: newData.businessInfo.email,
-        //   };
-      
-        // //const createId = await user.save({ omitUndefined: true });
-        // const updated = await Users.findByIdAndUpdate(businessID, { ...newUserData });
-        // if (!updated) { 
-        //     return NextResponse.json({
-        //         status: 404,
-        //         success: false,
-        //         message: "input business ID is not valid",
-        //       });
-        // }
-        //const newData = body.formData;
+        let fieldsToUpdate = await req.json();
+        // Remove any fields that have null values
+        removeNulls(fieldsToUpdate);
+        
+        console.log(fieldsToUpdate);
+
+        if (fieldsToUpdate.businessInfo) { 
+            let patchUserData = {
+                loginId: fieldsToUpdate.businessInfo.phoneNo,
+                userName: fieldsToUpdate.businessInfo.name,
+                phoneNo: fieldsToUpdate.businessInfo.phoneNo,
+                userRole: "business",
+                email: fieldsToUpdate.businessInfo.email,
+            };
+            removeNulls(patchUserData);
+            console.log(patchUserData);
+            const updated = await Users.findByIdAndUpdate(businessID, { ...patchUserData });
+        }
+                                                    
         const findId = await BusinessSetup.findOne({ businessID });
-        await BusinessSetup.findByIdAndUpdate(findId._id, { ...newData});
+        await BusinessSetup.findByIdAndUpdate(findId._id, { ...fieldsToUpdate});
         return NextResponse.json({status: 200 , message: "Data Updated" },{ status: 200 });
     } catch (error) {
         return NextResponse.json({  status: 500, message: "Error", error }, { status: 500 });
@@ -100,18 +111,19 @@ export async function PATCH(req, { params }) {
               });
         }
         
-        const patchData = await req.json();
+        let patchData = await req.json();
         //console.log(patchData);
+        removeNulls(patchData);
         
         if (patchData.businessInfo) { 
-            const patchUserData = {
+            let patchUserData = {
                 loginId: patchData.businessInfo.phoneNo,
                 userName: patchData.businessInfo.name,
                 phoneNo: patchData.businessInfo.phoneNo,
                 userRole: "business",
                 email: patchData.businessInfo.email,
             };
-            console.log("patchUserData");
+            removeNulls(patchUserData);
             console.log(patchUserData);
             await Users.updateOne(
                 { _id: businessID },
@@ -131,5 +143,4 @@ export async function PATCH(req, { params }) {
         return NextResponse.json({  status: 500, message: "Error", error }, { status: 500 });
     }
 }
-
 
