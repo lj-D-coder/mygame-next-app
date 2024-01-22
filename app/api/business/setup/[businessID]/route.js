@@ -57,23 +57,23 @@ export async function PUT(req, { params }) {
         const { businessID } = params;
         const newData = await req.json();
     
-        const newUserData = {
-            loginId: newData.businessInfo.phoneNo,
-            userName: newData.businessInfo.name,
-            phoneNo: newData.businessInfo.phoneNo,
-            userRole: "business",
-            email: newData.businessInfo.email,
-          };
+        // const newUserData = {
+        //     loginId: newData.businessInfo.phoneNo,
+        //     userName: newData.businessInfo.name,
+        //     phoneNo: newData.businessInfo.phoneNo,
+        //     userRole: "business",
+        //     email: newData.businessInfo.email,
+        //   };
       
-        //const createId = await user.save({ omitUndefined: true });
-        const updated = await Users.findByIdAndUpdate(businessID, { ...newUserData });
-        if (!updated) { 
-            return NextResponse.json({
-                status: 404,
-                success: false,
-                message: "input business ID is not valid",
-              });
-        }
+        // //const createId = await user.save({ omitUndefined: true });
+        // const updated = await Users.findByIdAndUpdate(businessID, { ...newUserData });
+        // if (!updated) { 
+        //     return NextResponse.json({
+        //         status: 404,
+        //         success: false,
+        //         message: "input business ID is not valid",
+        //       });
+        // }
         //const newData = body.formData;
         const findId = await BusinessSetup.findOne({ businessID });
         await BusinessSetup.findByIdAndUpdate(findId._id, { ...newData});
