@@ -5,7 +5,7 @@ import connection from "@/lib/utils/db-connect";
 
 // Controller to get business hours
 export async function POST(req) {
-  await connection;
+  await connection();
   try {
     const { businessStatus, businessInfo, businessHours, slot, bookingType } =
       await req.json();
@@ -72,7 +72,7 @@ export async function POST(req) {
 
 
 export async function GET() {
-  await connection;
+  await connection();
   try {
 
     // Query the 'users' collection for users with the role 'business'

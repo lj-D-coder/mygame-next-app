@@ -4,7 +4,7 @@ import connection from "@/lib/utils/db-connect";
 
 
 export async function POST(req) {
-    
+    await connection();
     try {
         const body = await req.json();
         const ticketData = body.formData;
@@ -16,7 +16,7 @@ export async function POST(req) {
 }
 
 export async function GET() { 
-    await connection;
+    await connection();
     try {
         const tickets = await Ticket.find();
         return NextResponse.json({ tickets }, {status: 200})

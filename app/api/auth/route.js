@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 import jwt from "jsonwebtoken";
 
 export async function POST(req) {
-  await connection;
+  await connection();
   try {
     let { loginId, phoneNo, email, userRole, userName } = await req.json();
 

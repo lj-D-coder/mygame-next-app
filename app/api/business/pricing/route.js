@@ -5,7 +5,7 @@ import connection from "@/lib/utils/db-connect";
 
 // Controller to get business hours
 export async function POST(req) {
-  await connection;
+  await connection();
   try {
     const { businessID, price, coupon} = await req.json();
 
