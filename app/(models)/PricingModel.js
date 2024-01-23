@@ -1,6 +1,4 @@
 import mongoose from "mongoose";
-mongoose.connect(process.env.MONGODB_URI);
-mongoose.Promise = global.Promise;
 
 const couponSchema = new mongoose.Schema({
   code: String,

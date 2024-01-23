@@ -1,7 +1,9 @@
 import Ticket from "@/app/(models)/Ticket";
 import { NextResponse } from "next/server";
+import connection from "@/lib/utils/db-connect";
 
 export async function GET(req, { params }) { 
+    await connection;
     try {
         const { id } = params;
         const foundTicket = await Ticket.findOne({ _id: id });
@@ -12,6 +14,7 @@ export async function GET(req, { params }) {
 }
 
 export async function DELETE(req, { params }) { 
+    await connection;
     try {
         const { id } = params;
         await Ticket.findByIdAndDelete(id);
@@ -22,6 +25,7 @@ export async function DELETE(req, { params }) {
 }
 
 export async function PUT(req, { params }) { 
+    await connection;
     try {
         const { id } = params;
         const body = await req.json();

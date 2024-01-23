@@ -1,9 +1,11 @@
 import PricingModel from "@/app/(models)/PricingModel";
 import Users from "@/app/(models)/Users";
 import { NextResponse } from "next/server";
+import connection from "@/lib/utils/db-connect";
 
 // Controller to get business hours
 export async function POST(req) {
+  await connection;
   try {
     const { businessID, price, coupon} = await req.json();
 
@@ -40,24 +42,23 @@ export async function POST(req) {
 }
 
 
-export async function GET() {
-  try {
-
-    const { userId } = await req.json();
-findUser
-    const findUser = await Users.findById(userId);
-        if (!findUser) { 
-            return NextResponse.json({
-                status: 404,
-                success: false,
-                message: "invalid User ID",
-              });
-        }
+// export async function GET() {
+//   await connection;
+//   try {
+//     const { userId } = await req.json();
+//     const findUser = await Users.findById(userId);
+//         if (!findUser) { 
+//             return NextResponse.json({
+//                 status: 404,
+//                 success: false,
+//                 message: "invalid User ID",
+//               });
+//         }
     
-    // Send the users with their data as the response
-    return NextResponse.json({ status: 200, message: "Success", "data": businessWithData });
-  } catch (error) {
-    console.error(error);
-    return NextResponse.json({ status: 500, error: 'An error occurred while trying to fetch the users.' });
-  }
-}
+//     // Send the users with their data as the response
+//     return NextResponse.json({ status: 200, message: "Success", "data": businessWithData });
+//   } catch (error) {
+//     console.error(error);
+//     return NextResponse.json({ status: 500, error: 'An error occurred while trying to fetch the users.' });
+//   }
+// }

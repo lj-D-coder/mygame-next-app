@@ -1,8 +1,5 @@
 import mongoose, { Schema, mongo } from "mongoose";
 
-mongoose.connect(process.env.MONGODB_URI);
-mongoose.Promise = global.Promise;
-
 const ticketSchema = new Schema(
   {
     title: String,

@@ -1,9 +1,11 @@
 import BusinessSetup from "@/app/(models)/BusinessSetup";
 import Users from "@/app/(models)/Users";
 import { NextResponse } from "next/server";
+import connection from "@/lib/utils/db-connect";
 
 // Controller to get business hours
 export async function POST(req) {
+  await connection;
   try {
     const { businessStatus, businessInfo, businessHours, slot, bookingType } =
       await req.json();
@@ -70,6 +72,7 @@ export async function POST(req) {
 
 
 export async function GET() {
+  await connection;
   try {
 
     // Query the 'users' collection for users with the role 'business'

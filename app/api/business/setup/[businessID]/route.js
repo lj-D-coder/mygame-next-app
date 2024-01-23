@@ -1,7 +1,8 @@
 import BusinessSetup from "@/app/(models)/BusinessSetup";
 import Users from "@/app/(models)/Users";
-
 import { NextResponse } from "next/server";
+import connection from "@/lib/utils/db-connect";
+
 
 
 // Function to remove null values
@@ -16,8 +17,8 @@ function removeNulls(obj) {
   }
 
 export async function GET(req, { params }) { 
+    await connection;
     try {
-  
         const { businessID } = params;
         const business = await Users.findById(businessID);
         if (!business) { 
@@ -45,6 +46,7 @@ export async function GET(req, { params }) {
 
 
 export async function DELETE(req, { params }) { 
+    await connection;
     try {
         const { businessID } = params;
         const businessData = await BusinessSetup.findOne({ businessID });
@@ -64,7 +66,7 @@ export async function DELETE(req, { params }) {
 }
 
 export async function PUT(req, { params }) { 
-
+    await connection;
     try {
         const { businessID } = params;
         let fieldsToUpdate = await req.json();
@@ -95,6 +97,7 @@ export async function PUT(req, { params }) {
 }
 
 export async function PATCH(req, { params }) { 
+    await connection;
     if (req.method !== 'PATCH') {
         NextResponse.json({ status: 405, message: 'Only PATCH requests allowed' }, {status: 405})
         return
