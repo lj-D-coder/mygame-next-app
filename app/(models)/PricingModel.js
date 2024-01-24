@@ -21,7 +21,7 @@ const businessPricingSchema = new mongoose.Schema(
   {
     businessID: String,
     price: {
-      invidual: priceSchema,
+      individual: priceSchema,
       team: priceSchema,
       field: priceSchema,
     },
