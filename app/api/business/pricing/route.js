@@ -11,7 +11,7 @@ export async function POST(req) {
     const { businessID, price, coupon} = await req.json();
 
     const business = await Users.findById(businessID);
-        if (!business || business.useRole !== "business") { 
+        if (!business || business.userRole !== "business") { 
             return NextResponse.json({
                 status: 404,
                 success: false,
@@ -24,7 +24,7 @@ export async function POST(req) {
       return NextResponse.json({
         status: 200,
         success: true,
-        message: "Business Pricing",
+        message: "Fetching Business Pricing",
         data: PricingData,
       });
     }
@@ -37,11 +37,17 @@ export async function POST(req) {
         });
         const data = await addPricing.save({ omitUndefined: true });
   
-  
+      if (!data) { 
+        return NextResponse.json({
+          status: 500,
+          success: false,
+          message: "something went Wrong",
+        });
+      }
       return NextResponse.json({
         status: 200,
         success: true,
-        message: "Business Data Saved",
+        message: "Business pricing data saved",
         data,
       });
      }
@@ -54,6 +60,7 @@ export async function POST(req) {
   } catch (error) {
     console.error(error);
     return NextResponse.json({
+      status: 500,
       success: false,
       message: "Internal Server Error",
     });
