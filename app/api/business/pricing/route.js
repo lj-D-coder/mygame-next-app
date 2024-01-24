@@ -2,7 +2,7 @@ import PricingModel from "@/app/(models)/PricingModel";
 import Users from "@/app/(models)/Users";
 import { NextResponse } from "next/server";
 import connection from "@/lib/utils/db-connect";
-import { URL } from 'url';
+import BusinessSetup from "@/app/(models)/BusinessSetup";
 
 // Controller to get business hours
 export async function POST(req) {
@@ -37,13 +37,10 @@ export async function POST(req) {
         });
         const data = await addPricing.save({ omitUndefined: true });
   
-      if (!data) { 
-        return NextResponse.json({
-          status: 500,
-          success: false,
-          message: "something went Wrong",
-        });
-      }
+      if (data) {
+        const update = { "businessStatus.setupComplete": true };
+        await BusinessSetup.updateOne({ businessID },{ $set: update });
+       }
       return NextResponse.json({
         status: 200,
         success: true,
@@ -53,8 +50,8 @@ export async function POST(req) {
      }
     return NextResponse.json({
       status: 404,
-      success: flase,
-      message: "prcing Data Not found!",
+      success: false,
+      message: "pricing Data Not found!",
       data,
     });
   } catch (error) {

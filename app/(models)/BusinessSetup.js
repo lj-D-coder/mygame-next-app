@@ -12,7 +12,7 @@ const businessSchema = new mongoose.Schema(
         monday: { type: Boolean, default: false },
         tuesday: { type: Boolean, default: false },
         wednesday: { type: Boolean, default: false },
-        thrusday: { type: Boolean, default: false },
+        thursday: { type: Boolean, default: false },
         friday: { type: Boolean, default: false },
         saturday: { type: Boolean, default: false },
       },
