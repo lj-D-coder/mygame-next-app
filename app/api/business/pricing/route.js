@@ -2,6 +2,7 @@ import PricingModel from "@/app/(models)/PricingModel";
 import Users from "@/app/(models)/Users";
 import { NextResponse } from "next/server";
 import connection from "@/lib/utils/db-connect";
+import { URL } from 'url';
 
 // Controller to get business hours
 export async function POST(req) {
@@ -10,26 +11,44 @@ export async function POST(req) {
     const { businessID, price, coupon} = await req.json();
 
     const business = await Users.findById(businessID);
-        if (!business) { 
+        if (!business || business.useRole !== "business") { 
             return NextResponse.json({
                 status: 404,
                 success: false,
-                message: "invalid business ID",
+                message: "Business ID not Found",
               });
         }
-            
     
-    const addPricing = new PricingModel({
-      businessID,
-      price,
-      coupon
+    const PricingData = await PricingModel.findOne({ businessID: business._id });
+    if (PricingData) { 
+      return NextResponse.json({
+        status: 200,
+        success: true,
+        message: "Business Pricing",
+        data: PricingData,
       });
-      const data = await addPricing.save({ omitUndefined: true });
-
-
+    }
+    
+    if (price) {
+      const addPricing = new PricingModel({
+        businessID,
+        price,
+        coupon
+        });
+        const data = await addPricing.save({ omitUndefined: true });
+  
+  
+      return NextResponse.json({
+        status: 200,
+        success: true,
+        message: "Business Data Saved",
+        data,
+      });
+     }
     return NextResponse.json({
-      success: true,
-      message: "Business Data Saved",
+      status: 404,
+      success: flase,
+      message: "prcing Data Not found!",
       data,
     });
   } catch (error) {
@@ -42,23 +61,33 @@ export async function POST(req) {
 }
 
 
-// export async function GET() {
-//   await connection;
+// export async function GET(req) {
+//   await connection();
 //   try {
-//     const { userId } = await req.json();
-//     const findUser = await Users.findById(userId);
-//         if (!findUser) { 
-//             return NextResponse.json({
-//                 status: 404,
-//                 success: false,
-//                 message: "invalid User ID",
-//               });
-//         }
-    
+//     const url = new URL(req.url, `http://${req.headers.host}`);
+//     const businessID = url.searchParams.get('businessID');
+//     console.log(businessID);
+//     const findUser = await Users.findById(businessID);
+//       if (!findUser) { 
+//           return NextResponse.json({
+//               status: 404,
+//               success: false,
+//               message: "invalid User ID",
+//             });
+//       }
+//     //check if business is open close open in that day business is not holiday
+//     const pricingData = await PricingModel.findOne({ businessID});
+//     if (!pricingData) { 
+//       return NextResponse.json({
+//         status: 404,
+//         success: false,
+//         message: "404 Pricing Data not Found!"
+//       });
+//     }
 //     // Send the users with their data as the response
-//     return NextResponse.json({ status: 200, message: "Success", "data": businessWithData });
+//     return NextResponse.json({ status: 200, message: "Success Pricing Fetched", "data": pricingData });
 //   } catch (error) {
 //     console.error(error);
-//     return NextResponse.json({ status: 500, error: 'An error occurred while trying to fetch the users.' });
+//     return NextResponse.json({ status: 500, error: 'An error occurred while trying to fetch the data.' });
 //   }
 // }

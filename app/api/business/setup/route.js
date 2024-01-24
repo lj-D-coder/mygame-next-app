@@ -12,6 +12,7 @@ export async function POST(req) {
 
     if (!businessInfo.phoneNo || businessInfo.phoneNo === null) {
       return NextResponse.json({
+        status: 500,
         success: false,
         message: "Missing PhoneNo in businessInfo",
       });
@@ -24,11 +25,13 @@ export async function POST(req) {
       });
       if (!findBusiness) {
         return NextResponse.json({
+          status: 404,
           success: false,
           message: "Business Data Not Available",
         });
       }
       return NextResponse.json({
+        status: 200,
         success: true,
         message: "Fetched Business Data",
         findBusiness,
@@ -57,6 +60,7 @@ export async function POST(req) {
     const savedBusiness = await newBusiness.save({ omitUndefined: true });
 
     return NextResponse.json({
+      status: 200,
       success: true,
       message: "Business Data Saved",
       savedBusiness,
@@ -64,6 +68,7 @@ export async function POST(req) {
   } catch (error) {
     console.error(error);
     return NextResponse.json({
+      status: 500,
       success: false,
       message: "Internal Server Error",
     });

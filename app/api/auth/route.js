@@ -15,7 +15,7 @@ export async function POST(req) {
         process.env.JWT_SECRET
       );
       console.log("fetching user data");
-      return NextResponse.json({ success: true, JWT_token });
+      return NextResponse.json({status: 200, success: true, JWT_token });
     }
 
     // // Check if email is provided and not an empty string
@@ -41,6 +41,7 @@ export async function POST(req) {
     );
     console.log("adding new user data");
     return NextResponse.json({
+      status: 200,
       success: true,
       message: "User added successfully",
       JWT_token,
@@ -48,6 +49,7 @@ export async function POST(req) {
   } catch (error) {
     console.error(error);
     return NextResponse.json({
+      status: 500,
       success: false,
       message: "Internal Server Error",
     });
