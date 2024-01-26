@@ -16,9 +16,8 @@ cloudinary.v2.config({
 export async function POST(req) {
   await connection();
   try {
-    const formData = await req.formData();
-    const file = formData.get("image");
-    const businessID = formData.get("businessID");
+    const data = await req.formData();
+    const businessID = data.get("businessID");
 
     const business = await Users.findById(businessID);
         if (!business) { 
@@ -28,22 +27,40 @@ export async function POST(req) {
                 message: "invalid business ID",
               });
         }
+        
+   
+  const image = await data.get("image");
+  const fileBuffer = await image.arrayBuffer();
+
+  var mime = image.type; 
+  var encoding = 'base64'; 
+  var base64Data = Buffer.from(fileBuffer).toString('base64');
+  var fileUri = 'data:' + mime + ';' + encoding + ',' + base64Data;
+
     
-    const buffer = await file.arrayBuffer();
-    const bytes = Buffer.from(buffer);
+    const uploadToCloudinary = () => {
+      return new Promise((resolve, reject) => {
 
-    const uploadResult = await new Promise(async(resolve, reject) => {
-      cloudinary.v2.uploader.upload_stream(
-        {
-            resource_type: "image",
-            folder: "bannerPhotos",
-        },
-        async (error, result) => {
-          if (error) reject(error);
-          else resolve(result);
-      }).end(bytes);
-  });
+          var result = cloudinary.uploader.upload(fileUri, {
+            invalidate: true,
+            },
+            {
+              resource_type: "image",
+              folder: "bannerPhotos"
+            })
+            .then((result) => {
+              console.log(result);
+              resolve(result);
+            })
+            .catch((error) => {
+              console.log(error);
+              reject(error);
+            });
+      });
+    };
 
+    const uploadResult = await uploadToCloudinary();
+    
     if (!uploadResult) {
       return NextResponse.json({
         status: 500,
