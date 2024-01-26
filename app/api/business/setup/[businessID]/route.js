@@ -71,7 +71,7 @@ export async function PUT(req, { params }) {
         const { businessID } = params;
         let fieldsToUpdate = await req.json();
         // Remove any fields that have null values
-        removeNulls(fieldsToUpdate);
+        const processData = removeNulls(fieldsToUpdate);
         
         //console.log(fieldsToUpdate);
 
@@ -83,13 +83,13 @@ export async function PUT(req, { params }) {
                 userRole: "business",
                 email: fieldsToUpdate.businessInfo.email,
             };
-            removeNulls(patchUserData);
+            const updateData = removeNulls(patchUserData);
             //console.log(patchUserData);
-            const updated = await Users.findByIdAndUpdate(businessID, { ...patchUserData });
+            const updated = await Users.findByIdAndUpdate(businessID, { ...updateData });
         }
                                                     
         const findId = await BusinessSetup.findOne({ businessID });
-        await BusinessSetup.findByIdAndUpdate(findId._id, { ...fieldsToUpdate});
+        await BusinessSetup.findByIdAndUpdate(findId._id, { ...processData});
         return NextResponse.json({status: 200 , message: "Data Updated" },{ status: 200 });
     } catch (error) {
         return NextResponse.json({  status: 500, message: "Error", error }, { status: 500 });
@@ -116,7 +116,7 @@ export async function PATCH(req, { params }) {
         
         let patchData = await req.json();
         //console.log(patchData);
-        removeNulls(patchData);
+        const processData = removeNulls(patchData);
         
         if (patchData.businessInfo) { 
             let patchUserData = {
@@ -126,16 +126,16 @@ export async function PATCH(req, { params }) {
                 userRole: "business",
                 email: patchData.businessInfo.email,
             };
-            removeNulls(patchUserData);
-            console.log(patchUserData);
+            const updateData = removeNulls(patchUserData);
+            console.log(updateData);
             await Users.updateOne(
                 { _id: businessID },
-                { $set: patchUserData });
+                { $set: updateData });
         }
-
+        console.log(processData);
         const result = await BusinessSetup.updateOne(
             { businessID },
-            { $set: patchData }
+            { $set: processData }
         );
         if (result) {
             return NextResponse.json({status: 200 , message: "Data patched" },{ status: 200 });
