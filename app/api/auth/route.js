@@ -30,7 +30,7 @@ export async function POST(req) {
       }
 
     if (!userName) { 
-      return  NextResponse.json({status: 404,
+      return  NextResponse.json({status: 200,
         success: false, message: "Please Sign Up to Continue" });
     } 
 
