@@ -31,7 +31,7 @@ export async function POST(req) {
 
     if (!userName) { 
       return  NextResponse.json({status: 404,
-        success: true, message: "Please Sign Up to Continue" });
+        success: false, message: "Please Sign Up to Continue" });
     } 
 
     const user = new Users({ loginId, userName, phoneNo, userRole, email });
