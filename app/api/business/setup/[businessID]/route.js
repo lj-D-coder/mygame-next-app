@@ -73,7 +73,7 @@ export async function PUT(req, { params }) {
         // Remove any fields that have null values
         removeNulls(fieldsToUpdate);
         
-        console.log(fieldsToUpdate);
+        //console.log(fieldsToUpdate);
 
         if (fieldsToUpdate.businessInfo) { 
             let patchUserData = {
@@ -84,7 +84,7 @@ export async function PUT(req, { params }) {
                 email: fieldsToUpdate.businessInfo.email,
             };
             removeNulls(patchUserData);
-            console.log(patchUserData);
+            //console.log(patchUserData);
             const updated = await Users.findByIdAndUpdate(businessID, { ...patchUserData });
         }
                                                     
