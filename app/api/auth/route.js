@@ -17,7 +17,7 @@ export async function POST(req) {
       console.log("fetching user data");
       return NextResponse.json({status: 200, success: true, JWT_token });
     }
-
+    
     // // Check if email is provided and not an empty string
     if (email === null || email.trim() === "") {
       email = undefined;
@@ -29,7 +29,10 @@ export async function POST(req) {
         userName = undefined;
       }
 
-    if (!phoneNo && !email && !userName) return  NextResponse.json({ error: "user not register" });
+    if (!loginId && !userName) { 
+      return  NextResponse.json({status: 404,
+        success: true, message: "Please Sign Up to Continue" });
+    } 
 
     const user = new Users({ loginId, userName, phoneNo, userRole, email });
 
