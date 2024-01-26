@@ -29,7 +29,7 @@ export async function POST(req) {
         userName = undefined;
       }
 
-    if (!loginId && !userName) { 
+    if (!userName) { 
       return  NextResponse.json({status: 404,
         success: true, message: "Please Sign Up to Continue" });
     } 
