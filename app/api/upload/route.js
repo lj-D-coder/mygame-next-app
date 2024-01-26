@@ -46,7 +46,8 @@ export async function POST(req) {
             },
             {
               resource_type: "image",
-              folder: "bannerPhotos"
+              folder: "bannerPhotos",
+              transformation: [{width: "1280" ,height: "720", crop: "crop"}],
             })
             .then((result) => {
               console.log(result);
