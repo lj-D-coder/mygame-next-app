@@ -71,9 +71,9 @@ export async function POST(req) {
     const StartTimestamp = convertToUnixTime(date, startTime);
     const EndTimestamp = convertToUnixTime(date, endTime);
 
-    const findMatch = await MatchModel.findById(matchId);
+    var findMatch = await MatchModel.findById(matchId);
     //query again with matchId and check the player count if find to add additional player
-//console.log(findMatch);
+    //console.log(findMatch);
 
     if (matchId === null && !findMatch) {
       const query = {
@@ -81,31 +81,27 @@ export async function POST(req) {
         EndTimestamp,
         EndTimestamp,
       };
-        const isMatchExist = await MatchModel.find(query);
-//console.log(findMatch);
-      if (isMatchExist.length !== 0) {
-        return NextResponse.json({
-          status: 400,
-          success: false,
-          message: "A match is already exits Provide match Id",
+      const isMatchExist = await MatchModel.find(query);
+      //console.log(findMatch);
+      if (isMatchExist.length === 0) {
+        const newMatch = new MatchModel({
+          // Fill in the match details here
+          businessID,
+          bookingType,
+          gameTime: businessData.slot.gameLength,
+          playerJoined: 0,
+          StartTimestamp,
+          EndTimestamp,
         });
+        var matchSave = await newMatch.save();
       }
-      
-      const newMatch = new MatchModel({
-        // Fill in the match details here
-        businessID,
-        bookingType,
-        gameTime: businessData.slot.gameLength,
-        playerJoined: 0,
-        StartTimestamp,
-        EndTimestamp,
-      });
-      var matchSave = await newMatch.save();
+      var findMatch = isMatchExist[0];
+      console.log(findMatch);
       // look in to player no
     }
-//console.log(matchSave);
-      const updateMatchId = findMatch ? findMatch._id : matchSave._id;
-//console.log(updateMatchId);
+    //console.log(matchSave);
+    const updateMatchId = findMatch ? findMatch._id : matchSave._id;
+    //console.log(updateMatchId);
     const newBooking = new BookingModel({
       userId,
       businessID,
@@ -115,35 +111,31 @@ export async function POST(req) {
       bookingDate: new Date(),
       paymentInfo,
     });
-      const booking = await newBooking.save();
-//console.log(booking);
-      if (!booking) { 
-        return NextResponse.json({
-            status: 400,
-            success: false,
-            message: "fail in creating booking",
-          });
-      }
+    const booking = await newBooking.save();
+    //console.log(booking);
+    if (booking && bookingType !== "individual") {
+      return NextResponse.json({
+        status: 400,
+        success: false,
+        message: "fail in creating booking",
+        data: booking,
+      });
+    }
 
-    //   const addPlayer = {
-    //       [sideChoose]: {
-    //         [booking._id]:UserName
-    //       }
-      // };
-      
-      const addPlayer = {
-        [`${sideChoose}.${booking._id}`]: UserName
-      };
-    
-// console.log(updateMatchId);
-console.log(addPlayer);
-const result = await MatchModel.updateOne({ _id: updateMatchId }, { $push: addPlayer });
+    const addPlayer = { [`${sideChoose}.${booking._id}`]: UserName };
+    const result = await MatchModel.updateOne(
+      { _id: updateMatchId },
+      { $push: addPlayer }
+    );
 
-    return NextResponse.json({
-      status: 200,
-      success: true,
-      message: "Match created",
-    });
+    if (result) {
+      return NextResponse.json({
+        status: 200,
+        success: true,
+        message: "Booking complete",
+        data: booking,
+      });
+    }
   } catch (error) {
     console.error(error);
     return NextResponse.json({

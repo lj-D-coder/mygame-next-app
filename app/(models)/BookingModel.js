@@ -14,7 +14,9 @@ const paymentSchema = new mongoose.Schema({
     paymentId: String,
     paymentMode: String,
     paymentStatus: String,
-});
+},
+{ _id: false }
+);
 
 const bookingSchema = new mongoose.Schema(
   {
