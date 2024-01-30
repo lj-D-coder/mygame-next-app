@@ -38,6 +38,7 @@ const businessSchema = new mongoose.Schema(
 
     slot: {
       gameLength: { type: Number, required: true },
+      playerPerSide: { type: Number, required: true },
       customGameLength: { type: Boolean, default: true },
     },
     bookingType: {
