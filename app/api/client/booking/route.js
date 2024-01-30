@@ -125,15 +125,19 @@ export async function POST(req) {
           });
       }
 
+    //   const addPlayer = {
+    //       [sideChoose]: {
+    //         [booking._id]:UserName
+    //       }
+      // };
+      
       const addPlayer = {
-          [sideChoose]: {
-            [booking._id]:UserName  
-          } 
-    };
+        [`${sideChoose}.${booking._id}`]: UserName
+      };
     
 // console.log(updateMatchId);
 console.log(addPlayer);
-const result = await MatchModel.updateOne({ _id: updateMatchId }, { $set: addPlayer });
+const result = await MatchModel.updateOne({ _id: updateMatchId }, { $push: addPlayer });
 
     return NextResponse.json({
       status: 200,
