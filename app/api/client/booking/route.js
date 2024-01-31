@@ -8,6 +8,8 @@ import BookingModel from "@/app/(models)/BookingModel";
 import convertToUnixTime from "@/lib/utils/to-unix-time";
 
 export async function POST(req) {
+  const dataReq = await req.json();
+  console.log(dataReq);
   await connection();
   try {
     const {
@@ -113,7 +115,7 @@ export async function POST(req) {
         data: booking,
       });
     }
-
+    //Need add logic if left side or right side is full add player to another side
     const addPlayer = { [`${sideChoose}.${booking._id}`]: UserName };
     const result = await MatchModel.updateOne(
       { _id: updateMatchId },

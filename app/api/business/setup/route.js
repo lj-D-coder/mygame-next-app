@@ -75,24 +75,33 @@ export async function POST(req) {
   }
 }
 
-
 export async function GET() {
   await connection();
   try {
-
     // Query the 'users' collection for users with the role 'business'
-    const business = await Users.find({ userRole: 'business' });
-    
+    const business = await Users.find({ userRole: "business" });
+
     // Fetch user data for each user
-    const businessWithData = await Promise.all(business.map(async (business) => {
-      const businessData = await BusinessSetup.findOne({ businessID: business._id });
-      return { ...business._doc, businessData };
-    }));
+    const businessWithData = await Promise.all(
+      business.map(async (business) => {
+        const businessData = await BusinessSetup.findOne({
+          businessID: business._id,
+        });
+        return { ...business._doc, businessData };
+      })
+    );
 
     // Send the users with their data as the response
-    return NextResponse.json({ status: 200, message: "Success", "data": businessWithData });
+    return NextResponse.json({
+      status: 200,
+      message: "Success",
+      data: businessWithData,
+    });
   } catch (error) {
     console.error(error);
-    return NextResponse.json({ status: 500, error: 'An error occurred while trying to fetch the users.' });
+    return NextResponse.json({
+      status: 500,
+      error: "An error occurred while trying to fetch the users.",
+    });
   }
 }

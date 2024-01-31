@@ -8,19 +8,21 @@ import BusinessSetup from "@/app/(models)/BusinessSetup";
 export async function POST(req) {
   await connection();
   try {
-    const { businessID, price, coupon} = await req.json();
+    const { businessID, price, coupon } = await req.json();
 
     const business = await Users.findById(businessID);
-        if (!business || business.userRole !== "business") { 
-            return NextResponse.json({
-                status: 404,
-                success: false,
-                message: "Business ID not Found",
-              });
-        }
-    
-    const PricingData = await PricingModel.findOne({ businessID: business._id });
-    if (PricingData) { 
+    if (!business || business.userRole !== "business") {
+      return NextResponse.json({
+        status: 404,
+        success: false,
+        message: "Business ID not Found",
+      });
+    }
+
+    const PricingData = await PricingModel.findOne({
+      businessID: business._id,
+    });
+    if (PricingData) {
       return NextResponse.json({
         status: 200,
         success: true,
@@ -28,26 +30,26 @@ export async function POST(req) {
         data: PricingData,
       });
     }
-    
+
     if (price) {
       const addPricing = new PricingModel({
         businessID,
         price,
-        coupon
-        });
-        const data = await addPricing.save({ omitUndefined: true });
-  
+        coupon,
+      });
+      const data = await addPricing.save({ omitUndefined: true });
+
       if (data) {
         const update = { "businessStatus.setupComplete": true };
-        await BusinessSetup.updateOne({ businessID },{ $set: update });
-       }
+        await BusinessSetup.updateOne({ businessID }, { $set: update });
+      }
       return NextResponse.json({
         status: 200,
         success: true,
         message: "Business pricing data saved",
         data,
       });
-     }
+    }
     return NextResponse.json({
       status: 404,
       success: false,
@@ -64,7 +66,6 @@ export async function POST(req) {
   }
 }
 
-
 // export async function GET(req) {
 //   await connection();
 //   try {
@@ -72,7 +73,7 @@ export async function POST(req) {
 //     const businessID = url.searchParams.get('businessID');
 //     console.log(businessID);
 //     const findUser = await Users.findById(businessID);
-//       if (!findUser) { 
+//       if (!findUser) {
 //           return NextResponse.json({
 //               status: 404,
 //               success: false,
@@ -81,7 +82,7 @@ export async function POST(req) {
 //       }
 //     //check if business is open close open in that day business is not holiday
 //     const pricingData = await PricingModel.findOne({ businessID});
-//     if (!pricingData) { 
+//     if (!pricingData) {
 //       return NextResponse.json({
 //         status: 404,
 //         success: false,
