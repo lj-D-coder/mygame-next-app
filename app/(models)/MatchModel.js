@@ -15,7 +15,9 @@ const matchSchema = new mongoose.Schema({
     type: Map,
     of: [String],
   },
-});
+},
+);
+//{ strict: false }); Add this to add custom team name
 
 const MatchModel = mongoose.model("Matches", matchSchema);
 

@@ -5,21 +5,8 @@ import connection from "@/lib/utils/db-connect";
 import BusinessSetup from "@/app/(models)/BusinessSetup";
 import MatchModel from "@/app/(models)/MatchModel";
 import BookingModel from "@/app/(models)/BookingModel";
+import convertToUnixTime from "@/lib/utils/to-unix-time";
 
-export const convertToUnixTime = (date, time) => {
-  // Combine the date and start time into a single string
-  const dateTime = `${date}T${time}:00`;
-
-  // Create a Date object
-  const dateObj = new Date(dateTime);
-
-  // Convert to Unix timestamp in seconds
-  const unixTime = dateObj.getTime() / 1000;
-
-  return unixTime;
-};
-
-// Controller to get business hours
 export async function POST(req) {
   await connection();
   try {
@@ -63,17 +50,10 @@ export async function POST(req) {
       });
     }
 
-    // generate bookingId add payment details
-    //Date and time , Blocking Logic should be added
-    // individual booking will only block when all players are full but in  this time frame no ground booking
-    // Usage:
-
     const StartTimestamp = convertToUnixTime(date, startTime);
     const EndTimestamp = convertToUnixTime(date, endTime);
-
+    const matchLength = (EndTimestamp - StartTimestamp) / 60;
     var findMatch = await MatchModel.findById(matchId);
-    //query again with matchId and check the player count if find to add additional player
-    //console.log(findMatch);
 
     if (matchId === null && !findMatch) {
       const query = {
@@ -82,13 +62,12 @@ export async function POST(req) {
         EndTimestamp,
       };
       const isMatchExist = await MatchModel.find(query);
-      //console.log(findMatch);
+
       if (isMatchExist.length === 0) {
         const newMatch = new MatchModel({
-          // Fill in the match details here
           businessID,
           bookingType,
-          gameTime: businessData.slot.gameLength,
+          gameTime: matchLength,
           playerJoined: 0,
           StartTimestamp,
           EndTimestamp,
@@ -96,12 +75,25 @@ export async function POST(req) {
         var matchSave = await newMatch.save();
       }
       var findMatch = isMatchExist[0];
-      console.log(findMatch);
-      // look in to player no
     }
-    //console.log(matchSave);
+
+    const playerCapacity = businessData.slot.playerPerSide * 2;
+    const newPlayerCount = UserName.length;
+
+    if (findMatch) {
+      const totalPlayer = findMatch.playerJoined + newPlayerCount;
+      if (totalPlayer >= playerCapacity) {
+        const freeSlot = playerCapacity - findMatch.playerJoined;
+        return NextResponse.json({
+          status: 200,
+          success: false,
+          message: `only ${freeSlot} free slot available`,
+        });
+      }
+    }
+
     const updateMatchId = findMatch ? findMatch._id : matchSave._id;
-    //console.log(updateMatchId);
+
     const newBooking = new BookingModel({
       userId,
       businessID,
@@ -112,7 +104,7 @@ export async function POST(req) {
       paymentInfo,
     });
     const booking = await newBooking.save();
-    //console.log(booking);
+
     if (booking && bookingType !== "individual") {
       return NextResponse.json({
         status: 400,
@@ -125,7 +117,10 @@ export async function POST(req) {
     const addPlayer = { [`${sideChoose}.${booking._id}`]: UserName };
     const result = await MatchModel.updateOne(
       { _id: updateMatchId },
-      { $push: addPlayer }
+      {
+        $push: addPlayer,
+        $inc: { playerJoined: newPlayerCount }, // increment playerJoined
+      }
     );
 
     if (result) {
