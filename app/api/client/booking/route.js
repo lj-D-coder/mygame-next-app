@@ -8,8 +8,6 @@ import BookingModel from "@/app/(models)/BookingModel";
 import convertToUnixTime from "@/lib/utils/to-unix-time";
 
 export async function POST(req) {
-  const dataReq = await req.json();
-  console.log(dataReq);
   await connection();
   try {
     const {
