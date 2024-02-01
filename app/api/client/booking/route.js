@@ -23,6 +23,9 @@ export async function POST(req) {
       paymentInfo,
     } = await req.json();
 
+    
+    const newPlayerCount = UserName.length;
+
     const user = await Users.findById(userId);
     if (!user) {
       return NextResponse.json({
@@ -41,6 +44,8 @@ export async function POST(req) {
       });
     }
 
+    const playerCapacity = businessData.slot.playerPerSide * 2;
+
     const PricingData = await PricingModel.findOne({ businessID });
     if (!PricingData) {
       return NextResponse.json({
@@ -53,8 +58,8 @@ export async function POST(req) {
     const StartTimestamp = convertToUnixTime(date, startTime);
     const EndTimestamp = convertToUnixTime(date, endTime);
     const matchLength = (EndTimestamp - StartTimestamp) / 60;
-    var findMatch = await MatchModel.findById(matchId);
 
+    var findMatch = await MatchModel.findById(matchId);
     if (matchId === null && !findMatch) {
       const query = {
         businessID,
@@ -67,6 +72,7 @@ export async function POST(req) {
         const newMatch = new MatchModel({
           businessID,
           bookingType,
+          playerCapacity,
           gameTime: matchLength,
           playerJoined: 0,
           StartTimestamp,
@@ -76,9 +82,6 @@ export async function POST(req) {
       }
       var findMatch = isMatchExist[0];
     }
-
-    const playerCapacity = businessData.slot.playerPerSide * 2;
-    const newPlayerCount = UserName.length;
 
     if (findMatch) {
       const totalPlayer = findMatch.playerJoined + newPlayerCount;
@@ -114,7 +117,7 @@ export async function POST(req) {
       });
     }
     //Need add logic if left side or right side is full add player to another side
-    const addPlayer = { [`${sideChoose}.${booking._id}`]: UserName };
+    const addPlayer = { [`teams.${sideChoose}.${booking._id}`]: UserName };
     const result = await MatchModel.updateOne(
       { _id: updateMatchId },
       {
