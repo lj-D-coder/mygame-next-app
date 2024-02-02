@@ -113,7 +113,7 @@ export async function POST(req) {
         status: 400,
         success: false,
         message: "fail in creating booking",
-        data: booking,
+        bookingId: booking._id
       });
     }
     //Need add logic if left side or right side is full add player to another side
@@ -131,7 +131,7 @@ export async function POST(req) {
         status: 200,
         success: true,
         message: "Booking complete",
-        data: booking,
+        bookingId: booking._id
       });
     }
   } catch (error) {

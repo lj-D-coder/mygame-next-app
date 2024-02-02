@@ -2,6 +2,7 @@ import BusinessSetup from "@/app/(models)/BusinessSetup";
 import Users from "@/app/(models)/Users";
 import { NextResponse } from "next/server";
 import connection from "@/lib/utils/db-connect";
+import PricingModel from "@/app/(models)/PricingModel";
 //import removeNulls from "@/lib/utils/clean-json";
 
 export async function GET(req, { params }) {
@@ -20,9 +21,27 @@ export async function GET(req, { params }) {
     const businessData = await BusinessSetup.findOne({
       businessID: business._id,
     });
+    if (!businessData) {
+      return NextResponse.json({
+        status: 404,
+        success: false,
+        message: "invalid business ID",
+      });
+    }
 
+    const PricingData = await PricingModel.findOne({
+      businessID: business._id,
+    });
+
+    if (!PricingData) {
+      return NextResponse.json({
+        status: 404,
+        success: false,
+        message: "invalid business ID",
+      });
+    }
     // Combine the business data with the business document
-    const data = { ...business._doc, businessData };
+    const data = { ...business._doc, businessData, PricingData };
 
     // Send the users with their data as the response
     return NextResponse.json({ status: 200, message: "Success", data });
