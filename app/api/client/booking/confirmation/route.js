@@ -39,7 +39,7 @@ export async function POST(req) {
     console.log(`Document updated with ID: ${docRef.id}`);
 
     // Return the document ID as a response
-    return NextResponse.json({ message: "Success" }, { status: 201 });
+    return NextResponse.json({ message: "Success" }, { status: 200 });
   } catch (error) {
     // Handle any errors
     return NextResponse.json({ error: error.message }, { status: 500 });

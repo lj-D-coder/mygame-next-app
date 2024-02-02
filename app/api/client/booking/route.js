@@ -6,6 +6,8 @@ import BusinessSetup from "@/app/(models)/BusinessSetup";
 import MatchModel from "@/app/(models)/MatchModel";
 import BookingModel from "@/app/(models)/BookingModel";
 import convertToUnixTime from "@/lib/utils/to-unix-time";
+import createOrder from "@/lib/utils/create-order-rzp";
+
 
 export async function POST(req) {
   await connection();
@@ -54,6 +56,19 @@ export async function POST(req) {
         message: "pricing Data Not found!",
       });
     }
+
+    const data = {
+      amount: 1000000,
+      currency: 'INR',
+      receipt: 'Receipt no. 1',
+      notes: {
+        notes_key_1: 'Tea, Earl Grey, Hot',
+        notes_key_2: 'Tea, Earl Grey… decaf.'
+      }
+    };
+
+    const rzpOrder = await createOrder(data);
+    console.log(rzpOrder);
 
     const StartTimestamp = convertToUnixTime(date, startTime);
     const EndTimestamp = convertToUnixTime(date, endTime);
@@ -113,7 +128,8 @@ export async function POST(req) {
         status: 400,
         success: false,
         message: "fail in creating booking",
-        bookingId: booking._id
+        bookingId: booking._id,
+        rzpOrder
       });
     }
     //Need add logic if left side or right side is full add player to another side
@@ -131,7 +147,8 @@ export async function POST(req) {
         status: 200,
         success: true,
         message: "Booking complete",
-        bookingId: booking._id
+        bookingId: booking._id,
+        rzpOrder
       });
     }
   } catch (error) {
