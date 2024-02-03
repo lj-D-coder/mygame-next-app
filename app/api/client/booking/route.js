@@ -125,9 +125,9 @@ export async function POST(req) {
 
     if (booking && bookingType !== "individual") {
       return NextResponse.json({
-        status: 400,
-        success: false,
-        message: "fail in creating booking",
+        status: 200,
+        success: true,
+        message: "Playground booking created",
         bookingId: booking._id,
         rzpOrder
       });
