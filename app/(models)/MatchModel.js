@@ -6,6 +6,7 @@ const matchSchema = new mongoose.Schema({
   bookingType: String,
   playerCapacity: Number,
   playerJoined: Number,
+  matchDate: Number,
   StartTimestamp: Number,
   EndTimestamp: Number,
   teams: {

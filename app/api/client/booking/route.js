@@ -69,7 +69,7 @@ export async function POST(req) {
 
     const rzpOrder = await createOrder(data);
     console.log(rzpOrder);
-
+    const matchDate = Date.parse(date) / 1000;
     const StartTimestamp = convertToUnixTime(date, startTime);
     const EndTimestamp = convertToUnixTime(date, endTime);
     const matchLength = (EndTimestamp - StartTimestamp) / 60;
@@ -88,6 +88,7 @@ export async function POST(req) {
           businessID,
           bookingType,
           playerCapacity,
+          matchDate,
           gameTime: matchLength,
           playerJoined: 0,
           StartTimestamp,
