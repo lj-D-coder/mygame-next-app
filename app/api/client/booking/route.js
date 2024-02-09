@@ -155,7 +155,7 @@ export async function POST(req) {
       await MatchModel.updateOne(
         { _id: updateMatchId },
         {
-          $set: { playerJoined: "$playerCapacity" },
+          $set: { playerJoined: playerCapacity },
         }
       );
 
