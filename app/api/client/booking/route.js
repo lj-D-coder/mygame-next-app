@@ -132,18 +132,20 @@ export async function POST(req) {
         message: "pricing not match!",
       });
     }
-    const amount = paymentInfo.amountPaid * 100
+   
     const data = {
-      amount,
+      amount: paymentInfo.amountPaid * 100,
       currency: "INR",
-      receipt: receiptNo,
+      receipt: `MG00${receiptNo}`,
       notes: {
-        orderId: booking,
+        bookingId: booking._id,
         orderAmount: paymentInfo.amountPaid,
         customerName: user.userName,
         customerPhone: user.phoneNo,
       },
     };
+
+    console.log(data);
 
     const rzpOrder = await createOrder(data);
 
