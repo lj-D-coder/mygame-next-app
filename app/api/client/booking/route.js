@@ -7,7 +7,7 @@ import MatchModel from "@/app/(models)/MatchModel";
 import BookingModel from "@/app/(models)/BookingModel";
 import convertToUnixTime from "@/lib/utils/to-unix-time";
 import createOrder from "@/lib/utils/create-order-rzp";
-
+import getNextSequence from "@/lib/utils/receipt-sequencer";
 
 export async function POST(req) {
   await connection();
@@ -25,7 +25,6 @@ export async function POST(req) {
       paymentInfo,
     } = await req.json();
 
-    
     const newPlayerCount = UserName.length;
 
     const user = await Users.findById(userId);
@@ -48,8 +47,8 @@ export async function POST(req) {
 
     const playerCapacity = businessData.slot.playerPerSide * 2;
 
-    const PricingData = await PricingModel.findOne({ businessID });
-    if (!PricingData) {
+    const pricingData = await PricingModel.findOne({ businessID });
+    if (!pricingData) {
       return NextResponse.json({
         status: 404,
         success: false,
@@ -57,18 +56,6 @@ export async function POST(req) {
       });
     }
 
-    const data = {
-      amount: 1000000,
-      currency: 'INR',
-      receipt: 'Receipt no. 1',
-      notes: {
-        notes_key_1: 'Tea, Earl Grey, Hot',
-        notes_key_2: 'Tea, Earl Grey… decaf.'
-      }
-    };
-
-    const rzpOrder = await createOrder(data);
-    console.log(rzpOrder);
     const matchDate = Date.parse(date) / 1000;
     const StartTimestamp = convertToUnixTime(date, startTime);
     const EndTimestamp = convertToUnixTime(date, endTime);
@@ -112,6 +99,10 @@ export async function POST(req) {
     }
 
     const updateMatchId = findMatch ? findMatch._id : matchSave._id;
+    var receiptNo = await getNextSequence("65bbae0ef201573df4ed646f");
+    if (!receiptNo) {
+      receiptNo = 0;
+    }
 
     const newBooking = new BookingModel({
       userId,
@@ -120,17 +111,58 @@ export async function POST(req) {
       bookingType,
       bookingStatus: "pending",
       bookingDate: new Date(),
+      receiptNo,
       paymentInfo,
     });
     const booking = await newBooking.save();
 
+    const priceValidation = paymentInfo.amountPaid / paymentInfo.quantity;
+    if (bookingType === "individual") {
+      let isPriceMatched =
+        priceValidation === parseInt(pricingData.price.individual.Price);
+    } else {
+      let isPriceMatched =
+        priceValidation === parseInt(pricingData.price.field.Price);
+    }
+
+    if (!priceValidation) {
+      return NextResponse.json({
+        status: 400,
+        success: false,
+        message: "pricing not match!",
+      });
+    }
+
+    const data = {
+      amount: paymentInfo.amountPaid * 100,
+      currency: "INR",
+      receipt: receiptNo,
+      notes: {
+        orderId: booking,
+        orderAmount: paymentInfo.amountPaid,
+        customerName: user.userName,
+        customerPhone: user.phoneNo,
+      },
+    };
+
+    const rzpOrder = await createOrder(data);
+
+    //console.log(rzpOrder);
+
     if (booking && bookingType !== "individual") {
+      await MatchModel.updateOne(
+        { _id: updateMatchId },
+        {
+          $set: { playerJoined: "$playerCapacity" },
+        }
+      );
+
       return NextResponse.json({
         status: 200,
         success: true,
         message: "Playground booking created",
         bookingId: booking._id,
-        rzpOrder
+        rzpOrder,
       });
     }
     //Need add logic if left side or right side is full add player to another side
@@ -149,7 +181,7 @@ export async function POST(req) {
         success: true,
         message: "Booking complete",
         bookingId: booking._id,
-        rzpOrder
+        rzpOrder,
       });
     }
   } catch (error) {
