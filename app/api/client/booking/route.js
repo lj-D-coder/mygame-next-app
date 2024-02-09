@@ -132,9 +132,9 @@ export async function POST(req) {
         message: "pricing not match!",
       });
     }
-
+    const amount = paymentInfo.amountPaid * 100
     const data = {
-      amount: paymentInfo.amountPaid * 100,
+      amount,
       currency: "INR",
       receipt: receiptNo,
       notes: {
