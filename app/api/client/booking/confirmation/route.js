@@ -12,6 +12,31 @@ export async function POST(req) {
     const { bookingId } = await req.json();
     const booking = await BookingModel.findById(bookingId);
     const data = await MatchModel.findById(booking.matchId);
+    if (!data || !booking) {
+      return NextResponse.json({
+        status: 400,
+        success: false,
+        message: "Booking or Match not Found",
+      });
+    }
+
+    const updateStatus = await BookingModel.updateOne(
+      { _id: booking._id },
+      {
+        $set: {
+          bookingStatus: "confirmed",
+          "paymentInfo.paymentStatus": "paid",
+        },
+      }
+    );
+
+    if (!updateStatus) {
+      return NextResponse.json({
+        status: 400,
+        success: false,
+        message: "error booking status update",
+      });
+    }
 
     // Convert the data to a plain JavaScript object
     let dataToSave = data.toObject();

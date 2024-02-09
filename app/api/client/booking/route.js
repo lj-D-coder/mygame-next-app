@@ -132,7 +132,7 @@ export async function POST(req) {
         message: "pricing not match!",
       });
     }
-   
+
     const data = {
       amount: paymentInfo.amountPaid * 100,
       currency: "INR",
@@ -145,7 +145,7 @@ export async function POST(req) {
       },
     };
 
-    console.log(data);
+    //console.log(data);
 
     const rzpOrder = await createOrder(data);
 
