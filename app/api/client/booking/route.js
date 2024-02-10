@@ -16,7 +16,7 @@ export async function POST(req) {
       userId,
       UserName,
       businessID,
-      matchId,
+      noOfSlot,
       sideChoose,
       date,
       startTime,
@@ -62,7 +62,7 @@ export async function POST(req) {
     const matchLength = (EndTimestamp - StartTimestamp) / 60;
 
     var findMatch = await MatchModel.findById(matchId);
-    if (matchId === null && !findMatch) {
+    if (!findMatch) {
       const query = {
         businessID,
         EndTimestamp,
@@ -76,6 +76,7 @@ export async function POST(req) {
           bookingType,
           playerCapacity,
           matchDate,
+          noOfSlot,
           gameTime: matchLength,
           playerJoined: 0,
           StartTimestamp,
@@ -184,7 +185,6 @@ export async function POST(req) {
         message: "Booking complete",
         bookingId: booking._id,
         rzpOrder,
-        findMatch
       });
     }
   } catch (error) {

@@ -2,11 +2,13 @@ import mongoose from "mongoose";
 
 const matchSchema = new mongoose.Schema({
   businessID: String,
+  noOfSlot: Number,
   gameTime: Number,
   bookingType: String,
   playerCapacity: Number,
   playerJoined: Number,
   matchDate: Number,
+  
   StartTimestamp: Number,
   EndTimestamp: Number,
   teams: {
