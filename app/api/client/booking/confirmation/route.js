@@ -40,8 +40,29 @@ export async function POST(req) {
 
     // Convert the data to a plain JavaScript object
     let dataToSave = data.toObject();
-
     dataToSave = await removeProperties(dataToSave, ["_id", "__v"]);
+
+    
+    if (dataToSave.bookingType === "playground") {
+
+      var addGameTime = (dataToSave.gameTime / dataToSave.noOfSlot) * 60;
+
+      for(let i = 1; i <= dataToSave.noOfSlot; i++) {
+        let newData = { ...dataToSave }; // Copy the data object
+        newData.EndTimestamp = newData.StartTimestamp + addGameTime;
+        newData.gameTime = (newData.gameTime / newData.noOfSlot);
+        
+        // Insert the new object into the Firestore collection
+        let docRef = firestore_db.doc("matchesCollection/" + `${i}SL-${booking.matchId}`);
+        await docRef.set(newData);
+        
+        // Update StartTimestamp for the next slot
+        dataToSave.StartTimestamp = newData.EndTimestamp;
+      }
+
+      return NextResponse.json({ message: "Success" }, { status: 200 });
+    }
+
 
     // Convert teams to plain JavaScript objects
     for (let team in dataToSave.teams) {
@@ -52,7 +73,7 @@ export async function POST(req) {
       dataToSave.teams[team] = Object.fromEntries(dataToSave.teams[team]);
     }
 
-    const docRef = firestore_db.doc("matchesCollection/" + booking.matchId);
+    const docRef = firestore_db.doc("matchesCollection/" + `1SL-${booking.matchId}`);
     const docSnap = await docRef.get();
 
     if (!docSnap.exists) {
