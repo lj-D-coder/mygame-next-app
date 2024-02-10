@@ -61,8 +61,7 @@ export async function POST(req) {
     const EndTimestamp = convertToUnixTime(date, endTime);
     const matchLength = (EndTimestamp - StartTimestamp) / 60;
 
-    var findMatch = await MatchModel.findById(matchId);
-    if (!findMatch) {
+  
       const query = {
         businessID,
         EndTimestamp,
@@ -85,7 +84,7 @@ export async function POST(req) {
         var matchSave = await newMatch.save();
       }
       var findMatch = isMatchExist[0];
-    }
+
 
     if (findMatch) {
       const totalPlayer = findMatch.playerJoined + newPlayerCount;
