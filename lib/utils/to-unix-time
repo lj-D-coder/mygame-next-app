@@ -1,15 +1,23 @@
-export const convertToUnixTime = (date, time) => {
-  // Combine the date and start time into a single string
-  const dateTime = `${date}T${time}:00`;
+export async function convertToUnixTime(date, time) {
+  try {
+    // Combine the date and start time into a single string
+    const dateTime = `${date}T${time}:00`;
 
-  // Create a Date object
-  const dateObj = new Date(dateTime);
+    // Create a Date object
+    const dateObj = new Date(dateTime);
 
-  // Convert to Unix timestamp in seconds
-  const unixTime = dateObj.getTime() / 1000;
+    // Convert to Unix timestamp in seconds
+    const unixTime = dateObj.getTime() / 1000;
 
-  return unixTime;
-};
+    return unixTime;
+  } catch (error) {
+    console.error("Error converting to Unix time:", error);
+    throw error;
+  }
+}
+
+
+
 
 
 export default convertToUnixTime;

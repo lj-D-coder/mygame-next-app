@@ -57,8 +57,8 @@ export async function POST(req) {
     }
 
     const matchDate = Date.parse(date) / 1000;
-    const StartTimestamp = convertToUnixTime(date, startTime);
-    const EndTimestamp = convertToUnixTime(date, endTime);
+    const StartTimestamp = await convertToUnixTime(date, startTime);
+    const EndTimestamp = await convertToUnixTime(date, endTime);
     const matchLength = (EndTimestamp - StartTimestamp) / 60;
 
   
