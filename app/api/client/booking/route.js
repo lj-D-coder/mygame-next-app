@@ -8,6 +8,7 @@ import BookingModel from "@/app/(models)/BookingModel";
 import convertToUnixTime from "@/lib/utils/to-unix-time";
 import createOrder from "@/lib/utils/create-order-rzp";
 import getNextSequence from "@/lib/utils/receipt-sequencer";
+import countPlayer from "@/lib/utils/player-count";
 
 export async function POST(req) {
   await connection();
@@ -61,39 +62,41 @@ export async function POST(req) {
     const EndTimestamp = await convertToUnixTime(date, endTime);
     const matchLength = (EndTimestamp - StartTimestamp) / 60;
 
-  
-      const query = {
+    const query = {
+      businessID,
+      EndTimestamp,
+      EndTimestamp,
+    };
+    const isMatchExist = await MatchModel.find(query);
+
+    if (isMatchExist.length === 0) {
+      const newMatch = new MatchModel({
         businessID,
+        bookingType,
+        playerCapacity,
+        matchDate,
+        noOfSlot,
+        gameTime: matchLength,
+        playerJoined: 0,
+        StartTimestamp,
         EndTimestamp,
-        EndTimestamp,
-      };
-      const isMatchExist = await MatchModel.find(query);
+      });
+      var matchSave = await newMatch.save();
+    }
+    var findMatch = isMatchExist[0] ? isMatchExist[0] : matchSave;
 
-      if (isMatchExist.length === 0) {
-        const newMatch = new MatchModel({
-          businessID,
-          bookingType,
-          playerCapacity,
-          matchDate,
-          noOfSlot,
-          gameTime: matchLength,
-          playerJoined: 0,
-          StartTimestamp,
-          EndTimestamp,
-        });
-        var matchSave = await newMatch.save();
+    let validSide = sideChoose;
+    if (findMatch.teams) {
+      var playerCountReqSide = await countPlayer(findMatch.teams[validSide]);
+      if (playerCountReqSide === businessData.slot.playerPerSide) {
+        validSide = validSide === "leftTeam" ? "rightTeam" : "leftTeam";
       }
-      var findMatch = isMatchExist[0];
-
-
-    if (findMatch) {
       const totalPlayer = findMatch.playerJoined + newPlayerCount;
-      if (totalPlayer >= playerCapacity) {
-        const freeSlot = playerCapacity - findMatch.playerJoined;
+      if (totalPlayer > playerCapacity) {
         return NextResponse.json({
           status: 200,
           success: false,
-          message: `only ${freeSlot} free slot available`,
+          message: `No free Slot`,
         });
       }
     }
@@ -167,8 +170,8 @@ export async function POST(req) {
         rzpOrder,
       });
     }
-    //Need add logic if left side or right side is full add player to another side
-    const addPlayer = { [`teams.${sideChoose}.${booking._id}`]: UserName };
+
+    const addPlayer = { [`teams.${validSide}.${booking._id}`]: UserName };
     const result = await MatchModel.updateOne(
       { _id: updateMatchId },
       {

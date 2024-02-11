@@ -15,10 +15,12 @@ const matchSchema = new mongoose.Schema({
     leftTeam: {
       type: Map,
       of: [String],
+      default: new Map()
     },
     rightTeam: {
       type: Map,
       of: [String],
+      default: new Map()
     },
   },
 });
