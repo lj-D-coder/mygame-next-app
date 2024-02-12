@@ -3,7 +3,7 @@ import Users from "@/app/(models)/Users";
 import { NextResponse } from "next/server";
 import connection from "@/lib/utils/db-connect";
 import PricingModel from "@/app/(models)/PricingModel";
-//import removeNulls from "@/lib/utils/clean-json";
+import LocationModel from "@/app/(models)/locationService";
 
 export async function GET(req, { params }) {
   await connection();
@@ -24,7 +24,7 @@ export async function GET(req, { params }) {
     const businessData = await BusinessSetup.findOne({
       businessID: business._id,
     });
-    console.log(businessData)
+    console.log(businessData);
     if (!businessData) {
       return NextResponse.json({
         status: 404,
@@ -143,6 +143,40 @@ export async function PATCH(req, { params }) {
         success: false,
         message: "Business Data not Found",
       });
+    }
+
+    // updating location for nearby search
+    if (data.businessInfo.location) {
+      let longitude = parseFloat(data.businessInfo.location.longitude);
+      let latitude = parseFloat(data.businessInfo.location.latitude);
+
+      const updatedLocation = await LocationModel.findOneAndUpdate(
+        { _id: businessID }, // find a document with this filter
+        {
+          $setOnInsert: {
+            // fields to insert if the document doesn't exist
+            _id: businessID,
+            "name": find.businessInfo.name,
+          },
+          $set: {
+            // fields to update
+            "location": {
+              type: "Point",
+              coordinates: [longitude, latitude], 
+            },
+          },
+        },
+        {
+          upsert: true, // if no documents match the filter, create a new one
+          new: true, // return the updated document
+        }
+      );
+
+      if (updatedLocation) {
+        LocationModel.collection.createIndex({
+          "location": "2dsphere",
+        });
+      }
     }
 
     // Prepare the update object
