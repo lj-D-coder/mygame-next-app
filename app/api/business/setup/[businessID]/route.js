@@ -9,7 +9,10 @@ export async function GET(req, { params }) {
   await connection();
   try {
     const { businessID } = params;
+
+    //console.log(businessID);
     const business = await Users.findById(businessID);
+    //console.log(business)
     if (!business) {
       return NextResponse.json({
         status: 404,
@@ -21,24 +24,21 @@ export async function GET(req, { params }) {
     const businessData = await BusinessSetup.findOne({
       businessID: business._id,
     });
+    console.log(businessData)
     if (!businessData) {
       return NextResponse.json({
         status: 404,
         success: false,
-        message: "invalid business ID",
+        message: "business data not set",
       });
     }
 
-    const PricingData = await PricingModel.findOne({
+    let PricingData = await PricingModel.findOne({
       businessID: business._id,
     });
 
     if (!PricingData) {
-      return NextResponse.json({
-        status: 404,
-        success: false,
-        message: "invalid business ID",
-      });
+      PricingData = undefined;
     }
     // Combine the business data with the business document
     const data = { ...business._doc, businessData, PricingData };
