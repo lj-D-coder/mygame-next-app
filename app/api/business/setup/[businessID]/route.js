@@ -24,7 +24,7 @@ export async function GET(req, { params }) {
     const businessData = await BusinessSetup.findOne({
       businessID: business._id,
     });
-    console.log(businessData);
+    //console.log(businessData);
     if (!businessData) {
       return NextResponse.json({
         status: 404,
@@ -171,12 +171,6 @@ export async function PATCH(req, { params }) {
           new: true, // return the updated document
         }
       );
-
-      if (updatedLocation) {
-        LocationModel.collection.createIndex({
-          "location": "2dsphere",
-        });
-      }
     }
 
     // Prepare the update object

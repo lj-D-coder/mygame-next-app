@@ -12,6 +12,6 @@ const receiptSchema = mongoose.Schema(
   }
 );
 
-const Receipt = mongoose.model("receiptCounter", receiptSchema);
+const Receipt = mongoose.models.receiptCounter ? mongoose.models.receiptCounter : mongoose.model("receiptCounter", receiptSchema);
 
 export default Receipt;

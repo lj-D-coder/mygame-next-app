@@ -31,6 +31,7 @@ const businessPricingSchema = new mongoose.Schema(
   }
 );
 
-//const PricingModel = mongoose.model("pricingCollection", businessPricingSchema);
-const PricingModel = mongoose.models.PricingCollection || mongoose.model("PricingCollection", businessPricingSchema);
+const PricingModel = mongoose.models.PricingCollection
+  ? mongoose.models.PricingCollection
+  : mongoose.model("PricingCollection", businessPricingSchema);
 export default PricingModel;

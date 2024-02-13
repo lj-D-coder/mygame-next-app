@@ -53,6 +53,8 @@ const businessSchema = new mongoose.Schema(
   }
 );
 
-//const BusinessSetup = mongoose.model("BusinessConfig", businessSchema);
-const BusinessSetup = mongoose.models.BusinessConfig || mongoose.model("BusinessConfig", businessSchema);
+const BusinessSetup = mongoose.models.BusinessConfig
+  ? mongoose.models.BusinessConfig
+  : mongoose.model("BusinessConfig", businessSchema);
+
 export default BusinessSetup;
