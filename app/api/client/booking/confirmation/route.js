@@ -49,6 +49,7 @@ export async function POST(req) {
 
       for(let i = 1; i <= dataToSave.noOfSlot; i++) {
         let newData = { ...dataToSave }; // Copy the data object
+        delete newData.teams;
         newData.EndTimestamp = newData.StartTimestamp + addGameTime;
         newData.gameTime = (newData.gameTime / newData.noOfSlot);
         
