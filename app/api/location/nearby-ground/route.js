@@ -73,14 +73,14 @@ export async function POST(req) {
           "YYYY-MM-DD h:mm:ss A"
         ).unix();
 
-       // console.log(startTimestampTomorrow);
+       console.log(startTimestampTomorrow);
         let matchesTomorrow = await MatchModel.find({
           businessID: businessID,
           StartTimestamp: startTimestampTomorrow,
           $expr: { $ne: ["$playerCapacity", "$playerJoined"] },
         });
-        
-        console.log(matchesTomorrow);
+
+        //console.log(matchesTomorrow);
 
         if (matchesTomorrow && Object.keys(matchesTomorrow).length > 0) {
           matches.push(matchesTomorrow[0]);
