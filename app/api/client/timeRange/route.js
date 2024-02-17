@@ -30,7 +30,7 @@ export async function POST(req) {
     };
     const findMatch = await MatchModel.find(query);
 
-    let timeRanges = {};
+    let timeRanges = [];
 
     let startTime = moment(openTime, "h:mm A");
     let endTime = moment(closeTime, "h:mm A");
@@ -67,7 +67,8 @@ export async function POST(req) {
         }
       }
 
-      timeRanges[`${startTimeString} - ${endTimeString}`] = status;
+      //timeRanges[`${startTimeString} - ${endTimeString}`] = status;
+      timeRanges.push(`${startTimeString} - ${endTimeString}`, status);
       startTime.add(gameLength, "minutes");
     }
 
