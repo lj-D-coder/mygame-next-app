@@ -1,4 +1,4 @@
-export async function convertToUnixTime(date, time) {
+async function convertToUnixTime(date, time) {
   try {
     // Combine the date and start time into a single string
     const dateTime = `${date}T${time}:00`;
