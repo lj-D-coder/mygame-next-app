@@ -79,6 +79,8 @@ export async function POST(req) {
           StartTimestamp: startTimestampTomorrow,
           $expr: { $ne: ["$playerCapacity", "$playerJoined"] },
         });
+        
+        console.log(matchesTomorrow);
 
         if (matchesTomorrow && Object.keys(matchesTomorrow).length > 0) {
           matches.push(matchesTomorrow[0]);
