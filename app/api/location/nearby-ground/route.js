@@ -4,6 +4,7 @@ import LocationModel from "@/app/(models)/locationService";
 import MatchModel from "@/app/(models)/MatchModel";
 import BusinessSetup from "@/app/(models)/BusinessSetup";
 import getAvailableSlots from "@/lib/utils/avail-slots-today";
+import PricingModel from "@/app/(models)/PricingModel";
 
 import moment from "moment";
 
@@ -50,7 +51,7 @@ export async function POST(req) {
         businessID,
       } = business; //destructuring business
 
-      let nearbyBusiness = { businessID, name, address, bannerUrl };
+      //let nearbyBusiness = { businessID, name, address, bannerUrl };
 
       var currentTime = new Date();
       var midnightTime = new Date(currentTime);
@@ -73,17 +74,30 @@ export async function POST(req) {
           "YYYY-MM-DD h:mm:ss A"
         ).unix();
 
-       console.log(startTimestampTomorrow);
+       //console.log(startTimestampTomorrow);
         let matchesTomorrow = await MatchModel.find({
           businessID: businessID,
           StartTimestamp: startTimestampTomorrow,
           $expr: { $ne: ["$playerCapacity", "$playerJoined"] },
         });
 
-        //console.log(matchesTomorrow);
-
         if (matchesTomorrow && Object.keys(matchesTomorrow).length > 0) {
-          matches.push(matchesTomorrow[0]);
+          const individualPrice = await PricingModel.findOne({ businessID: businessID }).select('price.individual.Price');
+          //console.log(price)
+
+          let { _id: matchId, gameTime, playerCapacity, playerJoined, matchDate, StartTimestamp, EndTimestamp } = matchesTomorrow[0];
+          let foundMatch = {
+            matchId,
+            "price": individualPrice.price.individual.Price,
+            gameTime,
+            playerCapacity,
+            playerJoined,
+            matchDate,
+            StartTimestamp,
+            EndTimestamp
+        };
+
+          matches.push(foundMatch);
         } 
           if (!arrayIncludesObject(nearbyGround, businessID)) {
             nearbyGround.push({ businessID, name, address, bannerUrl });

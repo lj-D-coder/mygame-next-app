@@ -8,9 +8,9 @@ export async function POST(req) {
     const body = await req.json();
     const ticketData = body.formData;
     await Ticket.create(ticketData);
-    return NextResponse.json({ messsage: "Ticket Created" }, { status: 201 });
+    return NextResponse.json({ message: "Ticket Created" }, { status: 201 });
   } catch (error) {
-    return NextResponse.json({ messsage: "Error", error }, { status: 500 });
+    return NextResponse.json({ message: "Error", error }, { status: 500 });
   }
 }
 
@@ -20,6 +20,6 @@ export async function GET() {
     const tickets = await Ticket.find();
     return NextResponse.json({ tickets }, { status: 200 });
   } catch (error) {
-    return NextResponse.json({ messsage: "Error", error }, { status: 500 });
+    return NextResponse.json({ message: "Error", error }, { status: 500 });
   }
 }

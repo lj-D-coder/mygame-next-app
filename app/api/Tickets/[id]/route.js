@@ -20,7 +20,7 @@ export async function DELETE(req, { params }) {
     await Ticket.findByIdAndDelete(id);
     return NextResponse.json({ message: "Ticket Deleted" }, { status: 200 });
   } catch (error) {
-    return NextResponse.json({ message: "Erron", error }, { status: 500 });
+    return NextResponse.json({ message: "Error", error }, { status: 500 });
   }
 }
 
