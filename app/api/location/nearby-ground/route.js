@@ -88,6 +88,8 @@ export async function POST(req) {
           let { _id: matchId, gameTime, playerCapacity, playerJoined, matchDate, StartTimestamp, EndTimestamp } = matchesTomorrow[0];
           let foundMatch = {
             matchId,
+            name,
+            address,
             "price": individualPrice.price.individual.Price,
             gameTime,
             playerCapacity,
@@ -95,7 +97,9 @@ export async function POST(req) {
             matchDate,
             StartTimestamp,
             EndTimestamp
-        };
+          };
+          
+          //let nearbyBusiness = { businessID, name, address, bannerUrl };
 
           matches.push(foundMatch);
         } 
