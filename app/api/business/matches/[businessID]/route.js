@@ -25,19 +25,25 @@ export async function GET(req, { params }) {
     const matches =await MatchModel.find({
     businessID,
     matchDate: { $gte: today.getTime() / 1000 } // convert to seconds since epoch
-    })
+    }).select('-teams -__v');
     //console.log(matches)
+
+    const allMatches = matches.map(match => {
+      const { _id: matchId, ...rest } = match.toObject();
+      return { matchId, ...rest };
+     });
+
     return NextResponse.json({
         status: 200,
         success: true,
-        message: "Nearby Business Fetched",
-        matches
+        message: "fetched all matches",
+        data: allMatches
       });
   } catch (error) {
     console.error(error);
     return NextResponse.json({
       status: 500,
-      error: "An error occurred while trying to fetch the users.",
+      error: "An error occurred.",
     });
   }
 }
