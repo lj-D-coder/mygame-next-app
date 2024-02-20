@@ -18,7 +18,9 @@ export async function GET(req, { params }) {
       });
     }
 
-    const myBookings = await BookingModel.find({ businessID, bookingStatus: "confirmed" }).sort({ createdAt: -1 }).select("-updatedAt -__v");
+    const myBookings = await BookingModel.find({ businessID, bookingStatus: "confirmed" })
+      .sort({ createdAt: -1 })
+      .select("-updatedAt -__v");
     const allBookings = myBookings.map((booking) => {
       const { _id: bookingId, createdAt, ...rest } = booking.toObject();
       return {
