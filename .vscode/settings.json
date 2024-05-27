@@ -1,5 +1,5 @@
 {
-  "cSpell.words": ["checklogin", "firestore"],
+  "cSpell.words": ["checklogin", "EDITMODE", "firestore", "fontawesome", "fortawesome"],
   "prettier.printWidth": 120,
   "prettier.proseWrap": "never"
 }
