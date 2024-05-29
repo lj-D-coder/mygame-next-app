@@ -21,15 +21,6 @@ const usersSchema = mongoose.Schema(
     profilePicture: {
       type: String,
     },
-    userLocation: {
-      type: {
-        type: String,
-        enum: ["Point"],
-      },
-      coordinates: {
-        type: [Number],
-      },
-    },
   },
   {
     timestamps: true,
