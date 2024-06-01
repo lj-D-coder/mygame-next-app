@@ -17,9 +17,9 @@ export async function POST(req) {
           })
       }
 
-      // LocationModel.collection.createIndex({
-      //     location: "2dsphere",
-      // });
+      LocationModel.collection.createIndex({
+          location: "2dsphere",
+      });
     
       UsersLocationModel.collection.createIndex({
         location: "2dsphere",
