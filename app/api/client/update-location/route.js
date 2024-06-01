@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import connection from "@/lib/utils/db-connect";
 import Users from "@/app/(models)/Users";
-import LocationModel from "@/app/(models)/locationService";
+import UsersLocationModel from "@/app/(models)/usersLocationService";
 
 export async function POST(req) {
   await connection();
@@ -17,7 +17,7 @@ export async function POST(req) {
       });
     }
     
-      const updatedLocation = await LocationModel.findOneAndUpdate(
+      const updatedLocation = await UsersLocationModel.findOneAndUpdate(
         { _id: userId }, // find a document with this filter
         {
           $setOnInsert: {

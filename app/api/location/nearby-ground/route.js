@@ -32,7 +32,7 @@ export async function POST(req) {
     }).select("_id");
 
     let arrBusinessId = await findBus.exec();
-    // console.log(arrBusinessId);
+    console.log(arrBusinessId);
 
     let nearbyGround = [];
     let matches = [];

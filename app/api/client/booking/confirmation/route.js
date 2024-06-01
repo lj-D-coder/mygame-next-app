@@ -66,12 +66,27 @@ export async function POST(req) {
 
 
     // Convert teams to plain JavaScript objects
-    for (let team in dataToSave.teams) {
-      let teamData = {};
-      for (let key in dataToSave.teams[team]) {
-        teamData[key] = [...dataToSave.teams[team][key]];
+    // for (let team in dataToSave.teams) {
+    //   let teamData = {};
+    //   for (let key in dataToSave.teams[team]) {
+    //     teamData[key] = [...dataToSave.teams[team][key]];
+    //   }
+    //   dataToSave.teams[team] = Object.fromEntries(dataToSave.teams[team]);
+    // }
+
+
+    
+    
+    for (let teamKey in dataToSave.teams) {
+      let teamMembers = [];
+      let teamMap = dataToSave.teams[teamKey];
+      
+      // Iterate over the Map
+      for (let [idKey, members] of teamMap.entries()) {
+        teamMembers = teamMembers.concat(members);
       }
-      dataToSave.teams[team] = Object.fromEntries(dataToSave.teams[team]);
+      
+      dataToSave.teams[teamKey] = teamMembers;
     }
 
     const docRef = firestore_db.doc("matchesCollection/" + `1SL-${booking.matchId}`);

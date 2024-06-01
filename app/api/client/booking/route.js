@@ -88,8 +88,24 @@ export async function POST(req) {
     let validSide = sideChoose;
     if (findMatch.teams) {
       var playerCountReqSide = await countPlayer(findMatch.teams[validSide]);
-      if (playerCountReqSide === businessData.slot.playerPerSide) {
+      console.log(playerCountReqSide);
+      // return
+      if (playerCountReqSide + newPlayerCount > businessData.slot.playerPerSide) {
         validSide = validSide === "leftTeam" ? "rightTeam" : "leftTeam";
+
+        var playerCountSwitchedSide = await countPlayer(findMatch.teams[validSide]);
+        if (playerCountSwitchedSide + newPlayerCount > businessData.slot.playerPerSide) { 
+          return NextResponse.json({
+            status: 400,
+            success: false,
+            message: "Match the number of players to available slots on each side before booking.",
+          });
+        }
+         NextResponse.json({
+          status: 200,
+          success: true,
+          message: "Auto switch sides, as not enough space on selected side.",
+        });
       }
       const totalPlayer = findMatch.playerJoined + newPlayerCount;
       if (totalPlayer > playerCapacity) {
