@@ -22,7 +22,7 @@ export async function POST(req) {
       // });
     
       UsersLocationModel.collection.createIndex({
-        userLocation: "2dsphere",
+        location: "2dsphere",
     });
 
     return NextResponse.json({

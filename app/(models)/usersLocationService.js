@@ -3,7 +3,7 @@ import mongoose, { Schema } from "mongoose";
 const UsersLocationSchema = new mongoose.Schema({
   name: { type: String, required: true },
   userId: { type: String, required: true },
-  userLocation: {
+  location: {
     type: {
       type: String,
       enum: ["Point"],
