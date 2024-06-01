@@ -85,7 +85,8 @@ export async function POST(req) {
           const individualPrice = await PricingModel.findOne({ businessID: businessID }).select('price.individual.Price');
           //console.log(price)
 
-          let { _id: matchId,businessID, gameTime, playerCapacity, playerJoined, matchDate, StartTimestamp, EndTimestamp } = matchesTomorrow[0];
+          let { _id: matchId, gameTime, playerCapacity, playerJoined, matchDate, StartTimestamp, EndTimestamp } = matchesTomorrow[0];
+          
           let foundMatch = {
             matchId,
             businessID,
