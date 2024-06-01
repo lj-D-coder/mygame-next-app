@@ -2,6 +2,7 @@ import connection from "@/lib/utils/db-connect";
 import LocationModel from "@/app/(models)/locationService";
 import Users from "@/app/(models)/Users";
 import { NextResponse } from "next/server";
+import UsersLocationModel from "@/app/(models)/usersLocationService";
 
 export async function POST(req) {
   await connection();
@@ -16,13 +17,13 @@ export async function POST(req) {
           })
       }
 
-      LocationModel.collection.createIndex({
-          location: "2dsphere",
-      });
+      // LocationModel.collection.createIndex({
+      //     location: "2dsphere",
+      // });
     
-    //   Users.collection.createIndex({
-    //     userLocation: "2dsphere",
-    // });
+      UsersLocationModel.collection.createIndex({
+        userLocation: "2dsphere",
+    });
 
     return NextResponse.json({
       status: 200,

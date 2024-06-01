@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import connection from "@/lib/utils/db-connect";
-import Users from "@/app/(models)/Users";
+import UsersLocationModel from "@/app/(models)/usersLocationService";
 
 
 
@@ -15,7 +15,7 @@ export async function POST(req) {
 
     // let userLocation = [longitude, latitude]; // make sure to input longitude first, then latitude
 
-    let nearbyUsers = Users.find({
+    let nearbyUsers = UsersLocationModel.find({
       userLocation: {
         $near: {
           $geometry: {
@@ -33,6 +33,7 @@ export async function POST(req) {
     let nearbyGround = [];
     let matches = [];
 
+    
     // for (let obj of arrBusinessId) {
     //   let business = await BusinessSetup.findOne({
     //     businessID: obj._id,

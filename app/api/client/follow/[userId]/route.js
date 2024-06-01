@@ -30,7 +30,7 @@ export async function GET(req, { params }) {
 
     const followerCount = getFollowers.followers.length;
 
-    console.log(getFollowers);
+    // console.log(getFollowers);
 
     if (getFollowers) {
       return NextResponse.json({
