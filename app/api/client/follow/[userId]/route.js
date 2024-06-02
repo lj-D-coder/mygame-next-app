@@ -72,7 +72,7 @@ export async function DELETE(req, { params }) {
     const result = await FollowModel.updateOne({ _id: userId }, { $pull: { followers: followerId } });
 
     if (result) {
-      return NextResponse.json({ status: 200, message: "Business Data Deleted" }, { status: 200 });
+      return NextResponse.json({ status: 200, message: "un-followed successfully" }, { status: 200 });
     }
   } catch (error) {
     return NextResponse.json({ status: 500, message: "Error", error }, { status: 500 });
