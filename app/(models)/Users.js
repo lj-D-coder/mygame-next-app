@@ -21,6 +21,9 @@ const usersSchema = mongoose.Schema(
     profilePicture: {
       type: String,
     },
+    firebaseToken: {
+      type: String,
+    },
   },
   {
     timestamps: true,
