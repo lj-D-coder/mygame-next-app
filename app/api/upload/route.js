@@ -71,7 +71,7 @@ export async function POST(req) {
 
     const result = await BusinessSetup.updateOne(
       { businessID },
-      { $push: { "businessInfo.bannerUrl": uploadResult.url } }
+      { $set: { "businessInfo.bannerUrl": uploadResult.url } }
     );
     if (!result) {
       return NextResponse.json({

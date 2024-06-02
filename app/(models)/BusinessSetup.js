@@ -24,7 +24,7 @@ const businessSchema = new mongoose.Schema(
       email: { type: String, required: true },
       facebook: { type: String, default: "https://www.facebook.com/" },
       instagram: { type: String, default: "https://www.instagram.com/" },
-      bannerUrl: { type: [String], default: [] },
+      bannerUrl: { type: String},
       gstNo: { type: String },
       location: {
         latitude: { type: String, required: true },
