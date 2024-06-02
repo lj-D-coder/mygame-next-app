@@ -8,6 +8,7 @@ export async function POST(req) {
   await connection();
   try {
     const { userId, userLocation, radius } = await req.json();
+    let nearbyPlayers = [];
 
     let nearbyUsers = UsersLocationModel.find({
       location: {
@@ -22,15 +23,16 @@ export async function POST(req) {
     }).select("_id");
 
     let findUserIds = await nearbyUsers.exec();
+
+    console.log(findUserIds);
+    
     const arrUserIds = findUserIds.filter(item => item._id !== userId);
 
     console.log(arrUserIds);
 
-    let nearbyPlayers = [];
-
     for (let id of arrUserIds) {
       let user = await Users.findById(id);
-      let userData = { userId: user._id, profilePicture: user.profilePicture };
+      let userData = { userId: user._id, name: user.userName, profilePicture: user.profilePicture };
       nearbyPlayers.push(userData);
     }
 
@@ -44,10 +46,12 @@ export async function POST(req) {
     });
   } catch (error) {
     console.error(error);
+    let nearbyPlayers = [];
     return NextResponse.json({
-      status: 500,
-      success: false,
-      message: "Internal Server Error",
+      status: 200,
+      success: true,
+      message: "No Nearby Players Found",
+      nearbyPlayers,
     });
   }
 }
