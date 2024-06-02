@@ -4,7 +4,6 @@ import UsersLocationModel from "@/app/(models)/usersLocationService";
 import Users from "@/app/(models)/Users";
 import FollowModel from "@/app/(models)/FollowModel";
 
-
 export async function POST(req) {
   await connection();
   try {
@@ -25,26 +24,31 @@ export async function POST(req) {
     let findUserIds = await nearbyUsers.exec();
 
     // console.log(findUserIds);
-    
-    const arrUserIds = findUserIds.filter(item => item._id !== userId);
 
-
+    const arrUserIds = findUserIds.filter((item) => item._id !== userId);
 
     // console.log(arrUserIds);
 
     for (let id of arrUserIds) {
-      const getFollowers = await FollowModel.findById(id).lean().exec();
-      const followerIds = getFollowers.followers;
-      const exists = followerIds.some(id => id.equals(id));
       let followingStatus = false;
-      if (exists) {
-        followingStatus = true;
-        console.log("exist")
-      }
-      console.log(followerIds);
+      const getFollowers = await FollowModel.findById(id).lean().exec();
+      
+      if (getFollowers) { 
+        const followerIds = getFollowers.followers.map(id => id.toString());
+        const userExists = followerIds.includes(userId);
 
+        if (userExists) {
+          followingStatus = true;
+        }
+      }
+      
       let user = await Users.findById(id);
-      let userData = { userId: user._id, name: user.userName, profilePicture: user.profilePicture , following: followingStatus};
+      let userData = {
+        userId: user._id,
+        name: user.userName,
+        profilePicture: user.profilePicture,
+        following: followingStatus,
+      };
       nearbyPlayers.push(userData);
     }
 
