@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import connection from "@/lib/utils/db-connect";
 import UsersLocationModel from "@/app/(models)/usersLocationService";
 import Users from "@/app/(models)/Users";
+import FollowModel from "@/app/(models)/FollowModel";
 
 
 export async function POST(req) {
@@ -9,7 +10,6 @@ export async function POST(req) {
   try {
     const { userId, userLocation, radius } = await req.json();
     let nearbyPlayers = [];
-
     let nearbyUsers = UsersLocationModel.find({
       location: {
         $near: {
@@ -24,19 +24,26 @@ export async function POST(req) {
 
     let findUserIds = await nearbyUsers.exec();
 
-    console.log(findUserIds);
+    // console.log(findUserIds);
     
     const arrUserIds = findUserIds.filter(item => item._id !== userId);
 
-    console.log(arrUserIds);
+
+
+    // console.log(arrUserIds);
 
     for (let id of arrUserIds) {
+      const getFollowers = await FollowModel.findById(id).lean().exec();
+      const followerIds = getFollowers.followers;
+      const exists = followerIds.some(id => id.equals(id));
+      let followingStatus = false;
+      if (exists) {followingStatus = true;}
       let user = await Users.findById(id);
-      let userData = { userId: user._id, name: user.userName, profilePicture: user.profilePicture };
+      let userData = { userId: user._id, name: user.userName, profilePicture: user.profilePicture , following: followingStatus};
       nearbyPlayers.push(userData);
     }
 
-    console.log(nearbyPlayers);
+    // console.log(nearbyPlayers);
 
     return NextResponse.json({
       status: 200,
