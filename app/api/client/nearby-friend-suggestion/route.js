@@ -33,15 +33,15 @@ export async function POST(req) {
     // console.log(arrUserIds);
 
     for (let id of arrUserIds) {
-      // const getFollowers = await FollowModel.findById(id).lean().exec();
-      // const followerIds = getFollowers.followers;
-      // const exists = followerIds.some(id => id.equals(id));
+      const getFollowers = await FollowModel.findById(id).lean().exec();
+      const followerIds = getFollowers.followers;
+      const exists = followerIds.some(id => id.equals(id));
       let followingStatus = false;
-      // if (exists) {
-      //   followingStatus = true;
-      //   console.log("exist")
-      // }
-      // console.log(followerIds);
+      if (exists) {
+        followingStatus = true;
+        console.log("exist")
+      }
+      console.log(followerIds);
 
       let user = await Users.findById(id);
       let userData = { userId: user._id, name: user.userName, profilePicture: user.profilePicture , following: followingStatus};
