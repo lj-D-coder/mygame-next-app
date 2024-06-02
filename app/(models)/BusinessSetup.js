@@ -24,7 +24,7 @@ const businessSchema = new mongoose.Schema(
       email: { type: String, required: true },
       facebook: { type: String, default: "https://www.facebook.com/" },
       instagram: { type: String, default: "https://www.instagram.com/" },
-      bannerUrl: { type: [String] },
+      bannerUrl: { type: [String], default: [] },
       gstNo: { type: String },
       location: {
         latitude: { type: String, required: true },
@@ -40,7 +40,7 @@ const businessSchema = new mongoose.Schema(
 
     slot: {
       gameLength: { type: Number, required: true },
-      playerPerSide: { type: Number, default: 0 },
+      playerPerSide: { type: Number, default: 7 },
       customGameLength: { type: Boolean, default: true },
     },
     bookingType: {
